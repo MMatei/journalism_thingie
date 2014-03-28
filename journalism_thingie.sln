@@ -1,0 +1,24 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "journalism_thingie", "journalism_thingie\journalism_thingie\journalism_thingie.csproj", "{D2A5962B-30D1-4E22-9DD3-E554514DD49B}"
+EndProject
+Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "journalism_thingieContent", "journalism_thingie\journalism_thingieContent\journalism_thingieContent.contentproj", "{DD85448D-4763-49A0-887C-9D6965214797}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D2A5962B-30D1-4E22-9DD3-E554514DD49B}.Debug|x86.ActiveCfg = Debug|x86
+		{D2A5962B-30D1-4E22-9DD3-E554514DD49B}.Debug|x86.Build.0 = Debug|x86
+		{D2A5962B-30D1-4E22-9DD3-E554514DD49B}.Release|x86.ActiveCfg = Release|x86
+		{D2A5962B-30D1-4E22-9DD3-E554514DD49B}.Release|x86.Build.0 = Release|x86
+		{DD85448D-4763-49A0-887C-9D6965214797}.Debug|x86.ActiveCfg = Debug|x86
+		{DD85448D-4763-49A0-887C-9D6965214797}.Release|x86.ActiveCfg = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
