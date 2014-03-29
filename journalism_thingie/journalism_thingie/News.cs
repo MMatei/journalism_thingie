@@ -8,8 +8,8 @@ namespace journalism_thingie
 {
     class News
     {
-        String situationDescription;
-        Option[] options;
+        public String situationDescription;
+        public Option[] options;
         /// <summary>
         /// The constructor receives the name of the file it will use to populate its fields.
         /// </summary>

@@ -117,21 +117,47 @@ namespace journalism_thingie
         /// </summary>
         public void reactToNews(double nationalismFactor, double minorityRightsFactor, double isolationismFactor,
             double socialJusticeFactor, double ideologyFactor)
-        {
-            double ideologicalDifference = Math.Abs(ideology - ideologyFactor);
-            //I ain't gonna substract trust just because the citizen is 0.0001 ideology left of the news
-            if (ideologicalDifference <= 0.1)
-            {// + trust because we like the news
-                mediaTrust += mediaTrust * fanaticism;
-            }
-            else
-            {// - trust because we hate the news
-                mediaTrust -= (1 - mediaTrust) * ideologicalDifference * fanaticism;
-            }
-            nationalist += nationalismFactor * mediaTrust;
-            minorityRights += minorityRightsFactor * mediaTrust;
-            isolationism += isolationismFactor * mediaTrust;
-            socialJustice += socialJusticeFactor * mediaTrust;
+        {   
+             double nationalismDifference = Math.Abs(nationalist - nationalismFactor);
+             if(nationalismDifference<0.05) mediaTrust += mediaTrust * fanaticism * 0.02;
+                else if(nationalismDifference<0.1) mediaTrust += mediaTrust * fanaticism * 0.01;
+                else if(nationalismDifference<0.25) mediaTrust += 0;
+                else if(nationalismDifference<0.5) mediaTrust -= (1 -mediaTrust) * fanaticism * 0.02;
+                else if (nationalismDifference < 0.75) mediaTrust -= (1 - mediaTrust) * fanaticism * 0.05;
+                else if (nationalismDifference < 1) mediaTrust -= (1 - mediaTrust) * fanaticism * 0.1;
+             
+             double isolationismDifference = Math.Abs(isolationism - isolationismFactor);
+             if(isolationismDifference<0.05) mediaTrust += mediaTrust * fanaticism * 0.02;
+                else if(isolationismDifference<0.1) mediaTrust += mediaTrust * fanaticism * 0.01;
+                else if(isolationismDifference<0.25) mediaTrust += 0;
+                else if (isolationismDifference < 0.5) mediaTrust -= (1 - mediaTrust) * fanaticism * 0.02;
+                else if (isolationismDifference < 0.75) mediaTrust -= (1 - mediaTrust) * fanaticism * 0.05;
+                else if (isolationismDifference < 1) mediaTrust -= (1 - mediaTrust) * fanaticism * 0.1;
+             
+             double socialJusticeDifference = Math.Abs(socialJustice - socialJusticeFactor);
+             if(socialJusticeDifference<0.05) mediaTrust += mediaTrust * fanaticism * 0.02;
+                else if(socialJusticeDifference<0.1) mediaTrust += mediaTrust * fanaticism * 0.01;
+                else if(socialJusticeDifference<0.25) mediaTrust += 0;
+                else if (socialJusticeDifference < 0.5) mediaTrust -= (1 - mediaTrust) * fanaticism * 0.02;
+                else if (socialJusticeDifference < 0.75) mediaTrust -= (1 - mediaTrust) * fanaticism * 0.05;
+                else if (socialJusticeDifference < 1) mediaTrust -= (1 - mediaTrust) * fanaticism * 0.1;
+             
+             double ideologyDifference = Math.Abs(ideology - ideologyFactor);
+             if(ideologyDifference<0.05) mediaTrust += mediaTrust * fanaticism * 0.02;
+                else if(ideologyDifference<0.1) mediaTrust += mediaTrust * fanaticism * 0.01;
+                else if(ideologyDifference<0.25) mediaTrust += 0;
+                else if (ideologyDifference < 0.5) mediaTrust -= (1 - mediaTrust) * fanaticism * 0.02;
+                else if (ideologyDifference < 0.75) mediaTrust -= (1 - mediaTrust) * fanaticism * 0.05;
+                else if (ideologyDifference < 1) mediaTrust -= (1 - mediaTrust) * fanaticism * 0.1;
+             
+             
+             double minorityRightsDifference = Math.Abs(minorityRights - minorityRightsFactor);
+             if(minorityRightsDifference<0.05) mediaTrust += mediaTrust * fanaticism * 0.02;
+                else if(minorityRightsDifference<0.1) mediaTrust += mediaTrust * fanaticism * 0.01;
+                else if(minorityRightsDifference<0.25) mediaTrust += 0;
+                else if (minorityRightsDifference < 0.5) mediaTrust -= (1 - mediaTrust) * fanaticism * 0.02;
+                else if (minorityRightsDifference < 0.75) mediaTrust -= (1 - mediaTrust) * fanaticism * 0.05;
+                else if (minorityRightsDifference < 1) mediaTrust -= (1 - mediaTrust) * fanaticism * 0.1;
         }
     }
 }

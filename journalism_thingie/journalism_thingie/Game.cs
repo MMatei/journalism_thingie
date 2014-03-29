@@ -21,6 +21,18 @@ namespace journalism_thingie
         private int screenW, screenH;
         private Citizen[] population = new Citizen[100];
 
+        //Textures and their rectangles
+        Texture2D background, notepad;
+        Rectangle backgroundRect, notepadRect;
+        SpriteFont font;
+        TextAreaChoice tac;
+
+        // Game State - we need to keep track of where we are to know what to draw and what input to receive
+        public byte gameState;
+        public const byte NOTEPAD = 1;//the part where you make your choice
+        public const byte FOCUS_GROUP = 2;//view info about the focus group
+        public const byte WATCH_NEWS = 3;//watch your decision unfold on tv
+
         public Game()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -49,6 +61,12 @@ namespace journalism_thingie
         /// </summary>
         protected override void LoadContent()
         {
+            notepad = Content.Load<Texture2D>("blank-notepad");
+            notepadRect = new Rectangle((int)(screenW * 0.2), (int)(screenH * 0.1), (int)(screenW * 0.6), (int)(screenH * 0.8));
+            background = Content.Load<Texture2D>("background");
+            backgroundRect = new Rectangle(0, 0, screenW, screenH);
+            font = Content.Load<SpriteFont>("SpriteFont1");
+            
             int i;
             uint nrmin = 0, nrmed = 0, nrmax = 0;
             Console.WriteLine("#POOR#");
@@ -81,6 +99,15 @@ namespace journalism_thingie
             Console.WriteLine("###\nOverly apathetic: " + nrmin);
             Console.WriteLine("Middle ground: " + nrmed);
             Console.WriteLine("Overly fanatic: " + nrmax);
+
+            News veste = new News("news.txt");
+            String[] choices = new String[veste.options.Length];
+            int j = 0;
+            foreach (Option o in veste.options)
+            {
+                choices[j++] = o.description;
+            }
+            tac = new TextAreaChoice(GraphicsDevice, spriteBatch, font, (int)(screenW * 0.3), (int)(screenH * 0.2), (int)(screenW * 0.4), (int)(screenH * 0.6), veste.situationDescription, choices);
         }
 
         /// <summary>
@@ -104,9 +131,7 @@ namespace journalism_thingie
             if (keyCurrent.IsKeyDown(Keys.Escape))
                 this.Exit();
 
-            // TODO: Add your update logic here
-
-            base.Update(gameTime);
+            tac.update(mouseStateCurrent);
         }
 
         /// <summary>
@@ -116,10 +141,12 @@ namespace journalism_thingie
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-
-            // TODO: Add your drawing code here
-
-            base.Draw(gameTime);
+            tac.draw();
+            spriteBatch.Begin();
+            spriteBatch.Draw(background, backgroundRect, Color.White);
+            spriteBatch.Draw(notepad, notepadRect, Color.White);
+            spriteBatch.Draw(tac.textArea, tac.textAreaRect, Color.White);
+            spriteBatch.End();
         }
     }
 }
