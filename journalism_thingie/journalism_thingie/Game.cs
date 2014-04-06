@@ -16,16 +16,19 @@ namespace journalism_thingie
     /// </summary>
     public class Game : Microsoft.Xna.Framework.Game
     {
-        GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
+        private GraphicsDeviceManager graphics;
+        private SpriteBatch spriteBatch;
         private int screenW, screenH;
         private Citizen[] population = new Citizen[100];
+        private News crrtNews;
+        private KeyboardState keyPrevious;
 
         //Textures and their rectangles
-        Texture2D background, notepad;
-        Rectangle backgroundRect, notepadRect;
-        SpriteFont font;
-        TextAreaChoice tac;
+        private Texture2D background, notepad, tvBackground;
+        private Rectangle backgroundRect, notepadRect, tvRect;
+        private SpriteFont font;
+        private TextAreaChoice notepadChoice;
+        private SubtitleArea tvSpeech;
 
         // Game State - we need to keep track of where we are to know what to draw and what input to receive
         public byte gameState;
@@ -53,6 +56,8 @@ namespace journalism_thingie
             this.IsMouseVisible = true;
             spriteBatch = new SpriteBatch(GraphicsDevice);
             base.Initialize();
+            gameState = NOTEPAD;
+            keyPrevious = Keyboard.GetState();
         }
 
         /// <summary>
@@ -65,6 +70,8 @@ namespace journalism_thingie
             notepadRect = new Rectangle((int)(screenW * 0.2), (int)(screenH * 0.1), (int)(screenW * 0.6), (int)(screenH * 0.8));
             background = Content.Load<Texture2D>("background");
             backgroundRect = new Rectangle(0, 0, screenW, screenH);
+            tvBackground = Content.Load<Texture2D>("tv-pdf");
+            tvRect = new Rectangle(0, 0, screenW, screenH);
             font = Content.Load<SpriteFont>("SpriteFont1");
             
             int i;
@@ -100,14 +107,15 @@ namespace journalism_thingie
             Console.WriteLine("Middle ground: " + nrmed);
             Console.WriteLine("Overly fanatic: " + nrmax);
 
-            News veste = new News("news.txt");
-            String[] choices = new String[veste.options.Length];
+            crrtNews = new News("news.txt");
+            String[] choices = new String[crrtNews.options.Length];
             int j = 0;
-            foreach (Option o in veste.options)
+            foreach (Option o in crrtNews.options)
             {
                 choices[j++] = o.description;
             }
-            tac = new TextAreaChoice(GraphicsDevice, spriteBatch, font, (int)(screenW * 0.3), (int)(screenH * 0.2), (int)(screenW * 0.4), (int)(screenH * 0.6), veste.situationDescription, choices);
+            notepadChoice = new TextAreaChoice(GraphicsDevice, spriteBatch, font, (int)(screenW * 0.3), (int)(screenH * 0.2), (int)(screenW * 0.4), (int)(screenH * 0.6), crrtNews.situationDescription, choices);
+            tvSpeech = new SubtitleArea(GraphicsDevice, spriteBatch, font, (int)(screenW * 0.1), (int)(screenH * 0.6), (int)(screenW * 0.8), (int)(screenH * 0.1));
         }
 
         /// <summary>
@@ -131,7 +139,26 @@ namespace journalism_thingie
             if (keyCurrent.IsKeyDown(Keys.Escape))
                 this.Exit();
 
-            tac.update(mouseStateCurrent);
+            switch (gameState)
+            {
+                case NOTEPAD:
+                {
+                    int ret = notepadChoice.update(mouseStateCurrent);
+                    if (ret != -1)
+                    {
+                        gameState = WATCH_NEWS;
+                        tvSpeech.setText(crrtNews.options[ret].newsArticle);
+                    }
+                }
+                break;
+                case WATCH_NEWS:
+                {
+                    if (tvSpeech.update(keyCurrent, keyPrevious) == 1)
+                        gameState = NOTEPAD;
+                }
+                break;
+            }
+            keyPrevious = keyCurrent;
         }
 
         /// <summary>
@@ -141,12 +168,26 @@ namespace journalism_thingie
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-            tac.draw();
-            spriteBatch.Begin();
-            spriteBatch.Draw(background, backgroundRect, Color.White);
-            spriteBatch.Draw(notepad, notepadRect, Color.White);
-            spriteBatch.Draw(tac.textArea, tac.textAreaRect, Color.White);
-            spriteBatch.End();
+            switch(gameState){
+            case NOTEPAD: {
+                notepadChoice.draw();
+                spriteBatch.Begin();
+                spriteBatch.Draw(background, backgroundRect, Color.White);
+                spriteBatch.Draw(notepad, notepadRect, Color.White);
+                spriteBatch.Draw(notepadChoice.textArea, notepadChoice.textAreaRect, Color.White);
+                spriteBatch.End();
+            }
+            break;
+            case WATCH_NEWS:
+            {
+                tvSpeech.draw();
+                spriteBatch.Begin();
+                spriteBatch.Draw(tvBackground, tvRect, Color.White);
+                spriteBatch.Draw(tvSpeech.textArea, tvSpeech.textAreaRect, Color.White);
+                spriteBatch.End();
+            }
+            break;
+            }
         }
     }
 }
