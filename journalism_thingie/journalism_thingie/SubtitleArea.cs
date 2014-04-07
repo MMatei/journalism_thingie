@@ -14,30 +14,35 @@ namespace journalism_thingie
         private SpriteBatch spriteBatch;
         private SpriteFont font;
         private List<String> text = new List<String>();
-        private int crrtLine, lastLineDeplas;
-        internal RenderTarget2D textArea;
-        internal Rectangle textAreaRect;
+        //vrem sa tinem subs centrate pe ecran => tinem o lista cu deplasamente pe x to ensure just that
+        private List<int> lineDeplas = new List<int>();
+        private int crrtLine;
+        private int height, width;
+        private Vector2 start;
 
         public SubtitleArea(GraphicsDevice gdi, SpriteBatch sb, SpriteFont font, int startX, int startY, int width, int height)
         {
             this.gdi = gdi;
             spriteBatch = sb;
             this.font = font;
-            textArea = new RenderTarget2D(gdi, width, height, false, gdi.PresentationParameters.BackBufferFormat, DepthFormat.Depth24);
-            textAreaRect = new Rectangle(startX, startY, width, height);
+            this.height = height;
+            this.width = width;
+            start = new Vector2(startX, startY);
         }
 
         public void setText(String txt)
         {
+            int spaceSize = (int)font.MeasureString(" ").X;
             //trebuie sa impartim descrierea pe linii, pt ca: primim 1 sir si DrawString deseneaza doar pe o linie continua
             text.Clear();
+            lineDeplas.Clear();
             String[] word = txt.Split(' ');
             String line = "";
             int lineLength = 0;
             foreach (String w in word)
             {
-                int wordLength = (int)font.MeasureString(w).X + 5;
-                if (lineLength + wordLength < textAreaRect.Width)
+                int wordLength = (int)font.MeasureString(w).X + spaceSize;
+                if (lineLength + wordLength < width)
                 {
                     lineLength += wordLength;
                     line += w + " ";
@@ -45,59 +50,46 @@ namespace journalism_thingie
                 else
                 {
                     text.Add(line);
+                    lineDeplas.Add((width - lineLength)/2);
                     line = w + " ";
                     lineLength = wordLength;
                 }
             }
             text.Add(line);
             crrtLine = 0;
-            lastLineDeplas = (textAreaRect.Width - lineLength) / 2;
+            lineDeplas.Add((width - lineLength) / 2);
         }
 
         public void draw()
         {
-            gdi.SetRenderTarget(textArea);
-            gdi.Clear(Color.Transparent);
-            spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.NonPremultiplied, null, null, null);
-
             if (crrtLine == text.Count - 1)
             {
-                spriteBatch.DrawString(font, text[crrtLine], new Vector2(lastLineDeplas-1, 0), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 0.5f);
-                spriteBatch.DrawString(font, text[crrtLine], new Vector2(lastLineDeplas+1, 0), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 0.5f);
-                spriteBatch.DrawString(font, text[crrtLine], new Vector2(lastLineDeplas, 1), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 0.5f);
-                spriteBatch.DrawString(font, text[crrtLine], new Vector2(lastLineDeplas, -1), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 0.5f);
-                spriteBatch.DrawString(font, text[crrtLine], new Vector2(lastLineDeplas, 0), Color.White, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
-            }
-            else if (crrtLine == text.Count - 2)
-            {
-                spriteBatch.DrawString(font, text[crrtLine], new Vector2(-1, 0), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 0.5f);
-                spriteBatch.DrawString(font, text[crrtLine], new Vector2(1, 0), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 0.5f);
-                spriteBatch.DrawString(font, text[crrtLine], new Vector2(0, 1), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 0.5f);
-                spriteBatch.DrawString(font, text[crrtLine], new Vector2(0, -1), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 0.5f);
-                spriteBatch.DrawString(font, text[crrtLine], Vector2.Zero, Color.White, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
-
-                spriteBatch.DrawString(font, text[crrtLine + 1], new Vector2(lastLineDeplas - 1, font.LineSpacing), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 0.5f);
-                spriteBatch.DrawString(font, text[crrtLine + 1], new Vector2(lastLineDeplas + 1, font.LineSpacing), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 0.5f);
-                spriteBatch.DrawString(font, text[crrtLine + 1], new Vector2(lastLineDeplas, font.LineSpacing - 1), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 0.5f);
-                spriteBatch.DrawString(font, text[crrtLine + 1], new Vector2(lastLineDeplas, font.LineSpacing + 1), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 0.5f);
-                spriteBatch.DrawString(font, text[crrtLine + 1], new Vector2(lastLineDeplas, font.LineSpacing), Color.White, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
+                float x = start.X + lineDeplas[crrtLine];
+                float y = start.Y;
+                spriteBatch.DrawString(font, text[crrtLine], new Vector2(x - 1, y), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 0.5f);
+                spriteBatch.DrawString(font, text[crrtLine], new Vector2(x + 1, y), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 0.5f);
+                spriteBatch.DrawString(font, text[crrtLine], new Vector2(x, y + 1), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 0.5f);
+                spriteBatch.DrawString(font, text[crrtLine], new Vector2(x, y - 1), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 0.5f);
+                spriteBatch.DrawString(font, text[crrtLine], new Vector2(x, y), Color.White, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
             }
             else
             {
-                spriteBatch.DrawString(font, text[crrtLine], new Vector2(-1, 0), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 0.5f);
-                spriteBatch.DrawString(font, text[crrtLine], new Vector2(1, 0), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 0.5f);
-                spriteBatch.DrawString(font, text[crrtLine], new Vector2(0, 1), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 0.5f);
-                spriteBatch.DrawString(font, text[crrtLine], new Vector2(0, -1), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 0.5f);
-                spriteBatch.DrawString(font, text[crrtLine], Vector2.Zero, Color.White, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
+                float x = start.X + lineDeplas[crrtLine];
+                float y = start.Y;
+                spriteBatch.DrawString(font, text[crrtLine], new Vector2(x - 1, y), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 0.5f);
+                spriteBatch.DrawString(font, text[crrtLine], new Vector2(x + 1, y), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 0.5f);
+                spriteBatch.DrawString(font, text[crrtLine], new Vector2(x, y + 1), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 0.5f);
+                spriteBatch.DrawString(font, text[crrtLine], new Vector2(x, y - 1), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 0.5f);
+                spriteBatch.DrawString(font, text[crrtLine], new Vector2(x, y), Color.White, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
 
-                spriteBatch.DrawString(font, text[crrtLine + 1], new Vector2(-1, font.LineSpacing), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 0.5f);
-                spriteBatch.DrawString(font, text[crrtLine + 1], new Vector2(1, font.LineSpacing), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 0.5f);
-                spriteBatch.DrawString(font, text[crrtLine + 1], new Vector2(0, font.LineSpacing - 1), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 0.5f);
-                spriteBatch.DrawString(font, text[crrtLine + 1], new Vector2(0, font.LineSpacing + 1), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 0.5f);
-                spriteBatch.DrawString(font, text[crrtLine + 1], new Vector2(0, font.LineSpacing), Color.White, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
+                x = start.X + lineDeplas[crrtLine + 1];
+                y = start.Y + font.LineSpacing;
+                spriteBatch.DrawString(font, text[crrtLine + 1], new Vector2(x - 1, y), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 0.5f);
+                spriteBatch.DrawString(font, text[crrtLine + 1], new Vector2(x + 1, y), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 0.5f);
+                spriteBatch.DrawString(font, text[crrtLine + 1], new Vector2(x, y - 1), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 0.5f);
+                spriteBatch.DrawString(font, text[crrtLine + 1], new Vector2(x, y + 1), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 0.5f);
+                spriteBatch.DrawString(font, text[crrtLine + 1], new Vector2(x, y), Color.White, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
             }
-            spriteBatch.End();
-            gdi.SetRenderTarget(null);
         }
 
         /// <summary>

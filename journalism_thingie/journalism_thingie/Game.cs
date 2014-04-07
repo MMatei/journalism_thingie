@@ -26,7 +26,7 @@ namespace journalism_thingie
         //Textures and their rectangles
         private Texture2D background, notepad, tvBackground;
         private Rectangle backgroundRect, notepadRect, tvRect;
-        private SpriteFont font;
+        private SpriteFont notepadFont, subtitleFont;
         private TextAreaChoice notepadChoice;
         private SubtitleArea tvSpeech;
 
@@ -72,7 +72,8 @@ namespace journalism_thingie
             backgroundRect = new Rectangle(0, 0, screenW, screenH);
             tvBackground = Content.Load<Texture2D>("tv-pdf");
             tvRect = new Rectangle(0, 0, screenW, screenH);
-            font = Content.Load<SpriteFont>("SpriteFont1");
+            notepadFont = Content.Load<SpriteFont>("notepadFont");
+            subtitleFont = Content.Load<SpriteFont>("subtitleFont");
             
             int i;
             uint nrmin = 0, nrmed = 0, nrmax = 0;
@@ -114,8 +115,9 @@ namespace journalism_thingie
             {
                 choices[j++] = o.description;
             }
-            notepadChoice = new TextAreaChoice(GraphicsDevice, spriteBatch, font, (int)(screenW * 0.3), (int)(screenH * 0.2), (int)(screenW * 0.4), (int)(screenH * 0.6), crrtNews.situationDescription, choices);
-            tvSpeech = new SubtitleArea(GraphicsDevice, spriteBatch, font, (int)(screenW * 0.1), (int)(screenH * 0.6), (int)(screenW * 0.8), (int)(screenH * 0.1));
+            notepadChoice = new TextAreaChoice(GraphicsDevice, spriteBatch, notepadFont, (int)(screenW * 0.3), (int)(screenH * 0.2), (int)(screenW * 0.4), (int)(screenH * 0.6));
+            notepadChoice.setText(crrtNews.situationDescription, choices);
+            tvSpeech = new SubtitleArea(GraphicsDevice, spriteBatch, subtitleFont, (int)(screenW * 0.1), (int)(screenH * 0.6), (int)(screenW * 0.8), (int)(screenH * 0.1));
         }
 
         /// <summary>
@@ -170,20 +172,18 @@ namespace journalism_thingie
             GraphicsDevice.Clear(Color.CornflowerBlue);
             switch(gameState){
             case NOTEPAD: {
+                spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.NonPremultiplied, null, null, null);
+                spriteBatch.Draw(background, backgroundRect, null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, 0.0f);
+                spriteBatch.Draw(notepad, notepadRect, null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, 0.5f);
                 notepadChoice.draw();
-                spriteBatch.Begin();
-                spriteBatch.Draw(background, backgroundRect, Color.White);
-                spriteBatch.Draw(notepad, notepadRect, Color.White);
-                spriteBatch.Draw(notepadChoice.textArea, notepadChoice.textAreaRect, Color.White);
                 spriteBatch.End();
             }
             break;
             case WATCH_NEWS:
             {
+                spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.NonPremultiplied, null, null, null);
+                spriteBatch.Draw(tvBackground, tvRect, null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, 0.0f);
                 tvSpeech.draw();
-                spriteBatch.Begin();
-                spriteBatch.Draw(tvBackground, tvRect, Color.White);
-                spriteBatch.Draw(tvSpeech.textArea, tvSpeech.textAreaRect, Color.White);
                 spriteBatch.End();
             }
             break;

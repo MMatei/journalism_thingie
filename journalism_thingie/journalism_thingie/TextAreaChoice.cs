@@ -15,22 +15,29 @@ namespace journalism_thingie
         private SpriteFont font;
         private List<String> description = new List<String>();
         private List<String>[] choice;
-        internal RenderTarget2D textArea;
-        internal Rectangle textAreaRect;
+        private int height, width;
+        private Vector2 start;
 
-        public TextAreaChoice(GraphicsDevice gdi, SpriteBatch sb, SpriteFont font, int startX, int startY, int width, int height,
-            String descr, String[] choice)
+        public TextAreaChoice(GraphicsDevice gdi, SpriteBatch sb, SpriteFont font, int startX, int startY, int width, int height)
         {
             this.gdi = gdi;
             spriteBatch = sb;
             this.font = font;
+            this.height = height;
+            this.width = width;
+            start = new Vector2(startX, startY);
+        }
+
+        public void setText(String descr, String[] choice)
+        {
+            int spaceSize = (int)font.MeasureString(" ").X;
             //trebuie sa impartim descrierea pe linii, pt ca: primim 1 sir si DrawString deseneaza doar pe o linie continua
             String[] word = descr.Split(' ');
             String line = "    ";
-            int lineLength = 20;
+            int lineLength = 4*spaceSize;
             foreach (String w in word)
             {
-                int wordLength = (int)font.MeasureString(w).X+5;
+                int wordLength = (int)font.MeasureString(w).X + spaceSize;
                 if (lineLength + wordLength < width)
                 {
                     lineLength += wordLength;
@@ -49,11 +56,11 @@ namespace journalism_thingie
             {
                 word = choice[i].Split(' ');
                 line = "    ";
-                lineLength = 20;
+                lineLength = 4*spaceSize;
                 this.choice[i] = new List<String>();
                 foreach (String w in word)
                 {
-                    int wordLength = (int)font.MeasureString(w).X+5;
+                    int wordLength = (int)font.MeasureString(w).X + spaceSize;
                     if (lineLength + wordLength < width)
                     {
                         lineLength += wordLength;
@@ -68,16 +75,11 @@ namespace journalism_thingie
                 }
                 this.choice[i].Add(line);
             }
-            textArea = new RenderTarget2D(gdi, width, height, false, gdi.PresentationParameters.BackBufferFormat, DepthFormat.Depth24);
-            textAreaRect = new Rectangle(startX, startY, width, height);
         }
 
         public void draw()
         {
-            gdi.SetRenderTarget(textArea);
-            gdi.Clear(Color.Transparent);
-            spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.NonPremultiplied, null, null, null);
-            Vector2 deplasament = Vector2.Zero;
+            Vector2 deplasament = start;
             foreach (String word in description)
             {
                 spriteBatch.DrawString(font, word, deplasament, Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
@@ -92,8 +94,6 @@ namespace journalism_thingie
                     deplasament.Y += font.LineSpacing;
                 }
             }
-            spriteBatch.End();
-            gdi.SetRenderTarget(null);
         }
 
         /// <summary>
@@ -101,17 +101,14 @@ namespace journalism_thingie
         /// </summary>
         public int update(MouseState mouseStateCrrt)
         {
-            if (mouseStateCrrt.LeftButton == ButtonState.Pressed && textAreaRect.Contains(mouseStateCrrt.X, mouseStateCrrt.Y)
-                && mouseStateCrrt.Y > description.Count*font.LineSpacing + textAreaRect.Y)
+            int mouseY = mouseStateCrrt.Y, mouseX = mouseStateCrrt.X;
+            if (mouseStateCrrt.LeftButton == ButtonState.Pressed && mouseX > start.X && mouseX < (start.X + width)
+                && mouseY > description.Count*font.LineSpacing + start.Y)
             {//we check what option is being clicked
-                int mouseY = mouseStateCrrt.Y - textAreaRect.Y;
-                //Console.WriteLine(mouseY);
-                int dist = (description.Count+1)*font.LineSpacing;
-                //Console.WriteLine(dist);
+                int dist = (description.Count+1)*font.LineSpacing + (int)start.Y;
                 for (int i = 0; i < choice.Length; i++)
                 {//for each choice
                     dist += choice[i].Count*font.LineSpacing;
-                    //Console.WriteLine(dist);
                     if (mouseY < dist)
                     {
                         Console.WriteLine("YOU SELECTED #" + i);
