@@ -20,7 +20,9 @@ namespace journalism_thingie
         private SpriteBatch spriteBatch;
         private int screenW, screenH;
         private Citizen[] population = new Citizen[100];
+        private FocusGroupView focusGroupView;
         private News crrtNews;
+        private MouseState mousePrevious;
         private KeyboardState keyPrevious;
 
         //Textures and their rectangles
@@ -56,7 +58,7 @@ namespace journalism_thingie
             this.IsMouseVisible = true;
             spriteBatch = new SpriteBatch(GraphicsDevice);
             base.Initialize();
-            gameState = NOTEPAD;
+            gameState = FOCUS_GROUP;
             keyPrevious = Keyboard.GetState();
         }
 
@@ -74,6 +76,7 @@ namespace journalism_thingie
             tvRect = new Rectangle(0, 0, screenW, screenH);
             notepadFont = Content.Load<SpriteFont>("notepadFont");
             subtitleFont = Content.Load<SpriteFont>("subtitleFont");
+            focusGroupView = new FocusGroupView(spriteBatch, notepadFont, screenW, screenH, Content.Load<Texture2D>("person"), background, population);
             
             int i;
             uint nrmin = 0, nrmed = 0, nrmax = 0;
@@ -115,9 +118,9 @@ namespace journalism_thingie
             {
                 choices[j++] = o.description;
             }
-            notepadChoice = new TextAreaChoice(GraphicsDevice, spriteBatch, notepadFont, (int)(screenW * 0.3), (int)(screenH * 0.2), (int)(screenW * 0.4), (int)(screenH * 0.6));
+            notepadChoice = new TextAreaChoice(spriteBatch, notepadFont, (int)(screenW * 0.3), (int)(screenH * 0.2), (int)(screenW * 0.4), (int)(screenH * 0.6));
             notepadChoice.setText(crrtNews.situationDescription, choices);
-            tvSpeech = new SubtitleArea(GraphicsDevice, spriteBatch, subtitleFont, (int)(screenW * 0.1), (int)(screenH * 0.6), (int)(screenW * 0.8), (int)(screenH * 0.1));
+            tvSpeech = new SubtitleArea(spriteBatch, subtitleFont, (int)(screenW * 0.1), (int)(screenH * 0.6), (int)(screenW * 0.8), (int)(screenH * 0.1));
         }
 
         /// <summary>
@@ -153,6 +156,15 @@ namespace journalism_thingie
                     }
                 }
                 break;
+                case FOCUS_GROUP:
+                {
+                    int ret = focusGroupView.update(mouseStateCurrent, mousePrevious, keyCurrent, gameTime);
+                    if (ret == 1)
+                    {
+                        gameState = NOTEPAD;
+                    }
+                }
+                break;
                 case WATCH_NEWS:
                 {
                     if (tvSpeech.update(keyCurrent, keyPrevious) == 1)
@@ -161,6 +173,7 @@ namespace journalism_thingie
                 break;
             }
             keyPrevious = keyCurrent;
+            mousePrevious = mouseStateCurrent;
         }
 
         /// <summary>
@@ -176,6 +189,13 @@ namespace journalism_thingie
                 spriteBatch.Draw(background, backgroundRect, null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, 0.0f);
                 spriteBatch.Draw(notepad, notepadRect, null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, 0.5f);
                 notepadChoice.draw();
+                spriteBatch.End();
+            }
+            break;
+            case FOCUS_GROUP: {
+                spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.NonPremultiplied, null, null, null);
+                spriteBatch.Draw(background, backgroundRect, null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, 0.0f);
+                focusGroupView.draw();
                 spriteBatch.End();
             }
             break;

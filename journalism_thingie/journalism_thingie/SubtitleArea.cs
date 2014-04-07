@@ -10,7 +10,6 @@ namespace journalism_thingie
 {
     class SubtitleArea
     {
-        private GraphicsDevice gdi;
         private SpriteBatch spriteBatch;
         private SpriteFont font;
         private List<String> text = new List<String>();
@@ -20,9 +19,8 @@ namespace journalism_thingie
         private int height, width;
         private Vector2 start;
 
-        public SubtitleArea(GraphicsDevice gdi, SpriteBatch sb, SpriteFont font, int startX, int startY, int width, int height)
+        public SubtitleArea(SpriteBatch sb, SpriteFont font, int startX, int startY, int width, int height)
         {
-            this.gdi = gdi;
             spriteBatch = sb;
             this.font = font;
             this.height = height;
