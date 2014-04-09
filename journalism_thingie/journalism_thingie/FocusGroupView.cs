@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Content;
 
 namespace journalism_thingie
 {
@@ -21,9 +22,10 @@ namespace journalism_thingie
         private String tooltip;
         private Vector2 tooltipStart = new Vector2();
         private int personsPerRow;
+        private Piechart2D piechart;
 
-        public FocusGroupView(SpriteBatch sb, SpriteFont font, int screenW, int screenH, Texture2D personTexture,
-            Texture2D tooltipTexture, Citizen[] pop)
+        public FocusGroupView(GraphicsDevice gdi, SpriteBatch sb, ContentManager content, SpriteFont font, int screenW, int screenH,
+            Texture2D personTexture, Texture2D tooltipTexture, Citizen[] pop)
         {
             spriteBatch = sb;
             this.font = font;
@@ -34,11 +36,31 @@ namespace journalism_thingie
             personRect = new Rectangle(0, 0, personTexture.Bounds.Width, personTexture.Bounds.Height);
             population = pop;
             personsPerRow = width / personRect.Width;
+
+            List<Color> colors = new List<Color>();
+            colors.Add(Color.Black);
+            colors.Add(Color.Blue);
+            colors.Add(Color.Red);
+            List<int> percentages = new List<int>();
+            int right = 0, center = 0, left = 0;
+            foreach(Citizen kane in pop)
+            {
+                if (kane.ideology < 0.3)
+                    right++;
+                else if (kane.ideology < 0.7)
+                    center++;
+                else
+                    left++;
+            }
+            percentages.Add(right);
+            percentages.Add(center);
+            percentages.Add(left);
+            piechart = new Piechart2D(gdi, content, percentages, colors);
         }
 
         public void draw()
         {
-            personRect.X = -personRect.Width;
+            /*personRect.X = -personRect.Width;
             personRect.Y = 0;
             for (int i = 0; i < population.Length; i++)
             {
@@ -63,7 +85,9 @@ namespace journalism_thingie
             {
                 spriteBatch.Draw(tooltipBackground, tooltipRect, null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, 0.95f);
                 spriteBatch.DrawString(font, tooltip, tooltipStart, Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
-            }
+            }*/
+
+            piechart.draw();
         }
 
         /// <summary>
@@ -71,7 +95,7 @@ namespace journalism_thingie
         /// Returns 1 if user wants to return to notepad
         /// </summary>
         public int update(MouseState mouseStateCrrt, MouseState mouseStatePrev, KeyboardState keyCurrent, GameTime gameTime)
-        {
+        {/*
             if (keyCurrent.IsKeyDown(Keys.Enter))
                 return 1;
             bool mouseNotMoved = mouseStateCrrt.X == mouseStatePrev.X && mouseStateCrrt.Y == mouseStatePrev.Y;
@@ -90,7 +114,7 @@ namespace journalism_thingie
                 if (alreadyCounting)
                 {
                     counter += gameTime.ElapsedGameTime.Milliseconds;
-                    Console.WriteLine(counter);
+                    //Console.WriteLine(counter);
                     if (counter >= 2000)
                     {
                         displayingTooltip = true;
@@ -109,7 +133,7 @@ namespace journalism_thingie
                     alreadyCounting = true;
                     counter = 0;
                 }
-            }
+            }*/
             return 0;
         }
     }

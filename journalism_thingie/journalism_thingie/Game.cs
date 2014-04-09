@@ -76,7 +76,6 @@ namespace journalism_thingie
             tvRect = new Rectangle(0, 0, screenW, screenH);
             notepadFont = Content.Load<SpriteFont>("notepadFont");
             subtitleFont = Content.Load<SpriteFont>("subtitleFont");
-            focusGroupView = new FocusGroupView(spriteBatch, notepadFont, screenW, screenH, Content.Load<Texture2D>("person"), background, population);
             
             int i;
             uint nrmin = 0, nrmed = 0, nrmax = 0;
@@ -121,6 +120,7 @@ namespace journalism_thingie
             notepadChoice = new TextAreaChoice(spriteBatch, notepadFont, (int)(screenW * 0.3), (int)(screenH * 0.2), (int)(screenW * 0.4), (int)(screenH * 0.6));
             notepadChoice.setText(crrtNews.situationDescription, choices);
             tvSpeech = new SubtitleArea(spriteBatch, subtitleFont, (int)(screenW * 0.1), (int)(screenH * 0.6), (int)(screenW * 0.8), (int)(screenH * 0.1));
+            focusGroupView = new FocusGroupView(GraphicsDevice, spriteBatch, Content, notepadFont, screenW, screenH, Content.Load<Texture2D>("person"), background, population);
         }
 
         /// <summary>
@@ -195,8 +195,8 @@ namespace journalism_thingie
             case FOCUS_GROUP: {
                 spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.NonPremultiplied, null, null, null);
                 spriteBatch.Draw(background, backgroundRect, null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, 0.0f);
-                focusGroupView.draw();
                 spriteBatch.End();
+                focusGroupView.draw();
             }
             break;
             case WATCH_NEWS:
