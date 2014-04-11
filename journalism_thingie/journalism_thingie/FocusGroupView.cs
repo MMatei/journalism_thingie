@@ -11,51 +11,68 @@ namespace journalism_thingie
 {
     class FocusGroupView
     {
+        private GraphicsDevice gdi;
         private SpriteBatch spriteBatch;
         private SpriteFont font;
-        private Texture2D person, tooltipBackground;
-        private Rectangle personRect, tooltipRect;
+        private Texture2D background, circle;
+        private Rectangle backgroundRect, circleRect;
         private int width, height;
-        private Citizen[] population;
-        private bool alreadyCounting = false, displayingTooltip = false;
-        private int counter;
-        private String tooltip;
-        private Vector2 tooltipStart = new Vector2();
-        private int personsPerRow;
         private Piechart2D piechart;
+        private RenderTarget2D piechartTexture;
 
-        public FocusGroupView(GraphicsDevice gdi, SpriteBatch sb, ContentManager content, SpriteFont font, int screenW, int screenH,
-            Texture2D personTexture, Texture2D tooltipTexture, Citizen[] pop)
+        public FocusGroupView(GraphicsDevice gdi, SpriteBatch sb, ContentManager content, SpriteFont font, Texture2D background, int screenW, int screenH)
         {
+            this.gdi = gdi;
             spriteBatch = sb;
             this.font = font;
             width = screenW;
             height = screenH;
-            this.person = personTexture;
-            this.tooltipBackground = tooltipTexture;
-            personRect = new Rectangle(0, 0, personTexture.Bounds.Width, personTexture.Bounds.Height);
-            population = pop;
-            personsPerRow = width / personRect.Width;
+            piechartTexture = new RenderTarget2D(gdi, 300, 300, false, gdi.PresentationParameters.BackBufferFormat, DepthFormat.Depth24);
+            this.background = background;
+            backgroundRect = new Rectangle(0, 0, width, height);
+            piechart = new Piechart2D(gdi, content, 300, 300);
+            circle = content.Load<Texture2D>("circle");
+            circleRect = new Rectangle(0, 0, 32, 32);
+        }
 
+        /// <summary>
+        /// Call this function each time we enter the focus grou view, in order to update the piechart with relevant information
+        /// </summary>
+        public void prepare(Citizen[] pop)
+        {
             List<Color> colors = new List<Color>();
             colors.Add(Color.Black);
+            colors.Add(new Color(64, 64, 64));
             colors.Add(Color.Blue);
+            colors.Add(new Color(255, 50, 50));
             colors.Add(Color.Red);
             List<int> percentages = new List<int>();
-            int right = 0, center = 0, left = 0;
-            foreach(Citizen kane in pop)
+            int eright = 0, right = 0, center = 0, left = 0, eleft = 0;
+            foreach (Citizen kane in pop)
             {
-                if (kane.ideology < 0.3)
+                if (kane.ideology < 0.15)
+                    eright++;
+                else if (kane.ideology < 0.3)
                     right++;
                 else if (kane.ideology < 0.7)
                     center++;
-                else
+                else if (kane.ideology < 0.85)
                     left++;
+                else
+                    eleft++;
             }
+            percentages.Add(eright);
             percentages.Add(right);
             percentages.Add(center);
             percentages.Add(left);
-            piechart = new Piechart2D(gdi, content, percentages, colors);
+            percentages.Add(eleft);
+            List<String> descr = new List<String>();
+            descr.Add("Extreme right " + eright + "%");
+            descr.Add("Rightist " + right + "%");
+            descr.Add("Centrist " + center + "%");
+            descr.Add("Leftist " + left + "%");
+            descr.Add("Extreme left " + eleft + "%");
+            piechart.setPiechart(percentages, colors, descr);
         }
 
         public void draw()
@@ -86,8 +103,24 @@ namespace journalism_thingie
                 spriteBatch.Draw(tooltipBackground, tooltipRect, null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, 0.95f);
                 spriteBatch.DrawString(font, tooltip, tooltipStart, Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
             }*/
-
+            gdi.SetRenderTarget(piechartTexture);
             piechart.draw();
+            gdi.SetRenderTarget(null);
+            spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.NonPremultiplied, null, null, null);
+            spriteBatch.Draw(background, backgroundRect, null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, 0.0f);
+            spriteBatch.Draw(piechartTexture, new Rectangle(0,0,300,300), null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, 1.0f);
+            circleRect.X = 300;
+            circleRect.Y = 40;
+            Vector2 txtPos = new Vector2(340, 45);
+            foreach (PieSlice slice in piechart.slices)
+            {
+                spriteBatch.Draw(circle, circleRect, null, slice.color, 0.0f, Vector2.Zero, SpriteEffects.None, 1.0f);
+                spriteBatch.DrawString(font, slice.description, txtPos, Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
+                circleRect.Y += 40;
+                txtPos.Y += 40;
+            }
+            spriteBatch.DrawString(font, "Citizen's ideology", new Vector2(80, 250), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
+            spriteBatch.End();
         }
 
         /// <summary>

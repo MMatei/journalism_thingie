@@ -120,7 +120,8 @@ namespace journalism_thingie
             notepadChoice = new TextAreaChoice(spriteBatch, notepadFont, (int)(screenW * 0.3), (int)(screenH * 0.2), (int)(screenW * 0.4), (int)(screenH * 0.6));
             notepadChoice.setText(crrtNews.situationDescription, choices);
             tvSpeech = new SubtitleArea(spriteBatch, subtitleFont, (int)(screenW * 0.1), (int)(screenH * 0.6), (int)(screenW * 0.8), (int)(screenH * 0.1));
-            focusGroupView = new FocusGroupView(GraphicsDevice, spriteBatch, Content, notepadFont, screenW, screenH, Content.Load<Texture2D>("person"), background, population);
+            focusGroupView = new FocusGroupView(GraphicsDevice, spriteBatch, Content, notepadFont, background, screenW, screenH);
+            focusGroupView.prepare(population);
         }
 
         /// <summary>
@@ -193,9 +194,6 @@ namespace journalism_thingie
             }
             break;
             case FOCUS_GROUP: {
-                spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.NonPremultiplied, null, null, null);
-                spriteBatch.Draw(background, backgroundRect, null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, 0.0f);
-                spriteBatch.End();
                 focusGroupView.draw();
             }
             break;

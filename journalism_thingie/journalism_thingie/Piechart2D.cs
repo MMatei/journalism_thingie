@@ -20,12 +20,12 @@ namespace journalism_thingie
         private static Vector3[] circlePoints;
         private static Effect effect;//one effect to draw them all
         private static GraphicsDevice gdi;
-        private List<PieSlice> slices = new List<PieSlice>();
-        Matrix world = Matrix.CreateTranslation(0, 0, 0);
-        Matrix view = Matrix.CreateLookAt(new Vector3(0, 0, 5), new Vector3(0, 0, 0), new Vector3(0, 1, 0));
-        Matrix projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45), 1366f / 768f, 0.1f, 100f);
+        internal List<PieSlice> slices = new List<PieSlice>();
+        private Matrix world;
+        private Matrix view;
+        private Matrix projection;
 
-        public Piechart2D(GraphicsDevice gdi, ContentManager content, List<int> slicePerecentage, List<Color> sliceColor)
+        public Piechart2D(GraphicsDevice gdi, ContentManager content, int screenW, int screenH)
         {
             /* How does one make a piechart? The answer is deceptively simple: given a circle made of 100 points, you
              * have 100 triangle strips. From here you just have to create a separate object for each category you want
@@ -60,7 +60,14 @@ namespace journalism_thingie
             if (Piechart2D.gdi == null)
                 Piechart2D.gdi = gdi;
 
-            // and now for the pie slices
+            world = Matrix.CreateTranslation(0, 0, 0);
+            view = Matrix.CreateLookAt(new Vector3(0, 0, 2), new Vector3(0, 0, 0), new Vector3(0, 1, 0));
+            projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(90), (float)screenW / (float)screenH, 0.1f, 100f);
+            Console.WriteLine(Vector3.Transform(Vector3.Transform(Vector3.Transform(new Vector3(1,0,0), world),view),projection));
+        }
+
+        public void setPiechart(List<int> slicePerecentage, List<Color> sliceColor, List<String> descr)
+        {
             // first - we check for consistency - better safe than sorry!
             int sum = 0;
             foreach (int i in slicePerecentage)
@@ -92,12 +99,15 @@ namespace journalism_thingie
                 slice.vb.SetData<VertexPositionColor>(vertices);
                 slice.ib = new IndexBuffer(gdi, typeof(short), indices.Length, BufferUsage.None);
                 slice.ib.SetData<short>(indices);
+                slice.color = color;
+                slice.description = descr[i];
                 slices.Add(slice);
             }
         }
 
         public void draw()
         {
+            gdi.Clear(Color.Transparent);
             //MVP matrixes are the same for all slices
             effect.Parameters["World"].SetValue(world);
             effect.Parameters["View"].SetValue(view);
@@ -113,13 +123,12 @@ namespace journalism_thingie
                 }
             }
         }
-
-        //tucked it here to keep it invisible in the rest of the code
-        //no need for any other class to know of its existence
-        class PieSlice
-        {
-            internal IndexBuffer ib;
-            internal VertexBuffer vb;
-        }
+    }
+    class PieSlice
+    {
+        internal IndexBuffer ib;
+        internal VertexBuffer vb;
+        internal Color color;
+        internal String description;
     }
 }
