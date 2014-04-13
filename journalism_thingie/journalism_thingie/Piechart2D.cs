@@ -20,12 +20,13 @@ namespace journalism_thingie
         private static Vector3[] circlePoints;
         private static Effect effect;//one effect to draw them all
         private static GraphicsDevice gdi;
+        private static Texture2D circle;
         internal List<PieSlice> slices = new List<PieSlice>();
         private Matrix world;
         private Matrix view;
         private Matrix projection;
 
-        public Piechart2D(GraphicsDevice gdi, ContentManager content, int screenW, int screenH)
+        public Piechart2D(GraphicsDevice gdi, ContentManager content, Texture2D circle, int screenW, int screenH)
         {
             /* How does one make a piechart? The answer is deceptively simple: given a circle made of 100 points, you
              * have 100 triangle strips. From here you just have to create a separate object for each category you want
@@ -59,6 +60,8 @@ namespace journalism_thingie
                 effect = content.Load<Effect>("SimpleEffect");
             if (Piechart2D.gdi == null)
                 Piechart2D.gdi = gdi;
+            if (Piechart2D.circle == null)
+                Piechart2D.circle = circle;
 
             world = Matrix.CreateTranslation(0, 0, 0);
             view = Matrix.CreateLookAt(new Vector3(0, 0, 2), new Vector3(0, 0, 0), new Vector3(0, 1, 0));
@@ -112,6 +115,7 @@ namespace journalism_thingie
             effect.Parameters["World"].SetValue(world);
             effect.Parameters["View"].SetValue(view);
             effect.Parameters["Projection"].SetValue(projection);
+            effect.Parameters["Texture"].SetValue(circle);
             foreach (PieSlice slice in slices)
             {
                 gdi.Indices = slice.ib;

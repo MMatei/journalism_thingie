@@ -30,8 +30,8 @@ namespace journalism_thingie
             piechartTexture = new RenderTarget2D(gdi, 300, 300, false, gdi.PresentationParameters.BackBufferFormat, DepthFormat.Depth24);
             this.background = background;
             backgroundRect = new Rectangle(0, 0, width, height);
-            piechart = new Piechart2D(gdi, content, 300, 300);
-            circle = content.Load<Texture2D>("circle");
+            piechart = new Piechart2D(gdi, content, content.Load<Texture2D>("circle"), 300, 300);
+            circle = content.Load<Texture2D>("circle_small");
             circleRect = new Rectangle(0, 0, 32, 32);
         }
 
