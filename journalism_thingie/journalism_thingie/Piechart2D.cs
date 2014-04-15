@@ -85,6 +85,8 @@ namespace journalism_thingie
             for (int i = 0; i < slicePerecentage.Count; i++)
             {
                 int percentage = slicePerecentage[i];
+                if (percentage == 0)
+                    continue;
                 Color color = sliceColor[i];
                 PieSlice slice = new PieSlice();
                 VertexPositionColor[] vertices = new VertexPositionColor[percentage + 2];

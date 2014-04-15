@@ -14,7 +14,7 @@ namespace journalism_thingie
     /// <summary>
     /// This is the main type for your game
     /// </summary>
-    public class Game : Microsoft.Xna.Framework.Game
+    public partial class Game : Microsoft.Xna.Framework.Game
     {
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
@@ -122,6 +122,7 @@ namespace journalism_thingie
             tvSpeech = new SubtitleArea(spriteBatch, subtitleFont, (int)(screenW * 0.1), (int)(screenH * 0.6), (int)(screenW * 0.8), (int)(screenH * 0.1));
             focusGroupView = new FocusGroupView(GraphicsDevice, spriteBatch, Content, notepadFont, background, screenW, screenH);
             focusGroupView.prepare(population);
+            Console.WriteLine(endgame());
         }
 
         /// <summary>
@@ -130,51 +131,6 @@ namespace journalism_thingie
         /// </summary>
         protected override void UnloadContent()
         {
-        }
-
-        /// <summary>
-        /// Allows the game to run logic such as updating the world,
-        /// checking for collisions, gathering input, and playing audio.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
-        protected override void Update(GameTime gameTime)
-        {
-            KeyboardState keyCurrent = Keyboard.GetState();
-            MouseState mouseStateCurrent = Mouse.GetState();
-            // Allows the game to exit
-            if (keyCurrent.IsKeyDown(Keys.Escape))
-                this.Exit();
-
-            switch (gameState)
-            {
-                case NOTEPAD:
-                {
-                    int ret = notepadChoice.update(mouseStateCurrent);
-                    if (ret != -1)
-                    {
-                        gameState = WATCH_NEWS;
-                        tvSpeech.setText(crrtNews.options[ret].newsArticle);
-                    }
-                }
-                break;
-                case FOCUS_GROUP:
-                {
-                    int ret = focusGroupView.update(mouseStateCurrent, mousePrevious, keyCurrent, gameTime);
-                    if (ret == 1)
-                    {
-                        gameState = NOTEPAD;
-                    }
-                }
-                break;
-                case WATCH_NEWS:
-                {
-                    if (tvSpeech.update(keyCurrent, keyPrevious) == 1)
-                        gameState = NOTEPAD;
-                }
-                break;
-            }
-            keyPrevious = keyCurrent;
-            mousePrevious = mouseStateCurrent;
         }
 
         /// <summary>

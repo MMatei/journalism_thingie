@@ -74,6 +74,7 @@
   <ItemGroup>
     <Compile Include="Citizen.cs" />
     <Compile Include="FocusGroupView.cs" />
+    <Compile Include="Game_update.cs" />
     <Compile Include="News.cs" />
     <Compile Include="Piechart2D.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
