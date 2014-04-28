@@ -105,82 +105,166 @@ namespace journalism_thingie
 
         /// <summary>
         /// Adjust citizen's awareness of issues and his trust in your network, based on the news you presented.
-        /// dominantFactor identifies which of ideology, nationalism etc will influence trust
-        /// factor is the value around which the citizen's respective factor must be in order for him to trust this news
-        /// the modifiers will influence the citizen's issues depending on his trust in the network
-        /// Basically, there are two phases when reacting to a piece of news:
-        /// 1. determine trust modification; the more trust a citizen has the easier it is to gain more and
-        /// the harder it is to lose it (people are usually conservative)
-        /// 2. affect the citizen's issue based on news modifiers and trust
-        /// Altogether, the way I've designed this function ensures that you can convert citizens to your
-        /// point of view by presenting news they like (which gains their trust, without significantly lowering
-        /// the trust of your loyal viewers)
-        /// Of course, you need to be careful not to make extreme assertions when trying to appeal to a broader audience
-        /// that will lead to an undesireable shift in your fanbase's issues
+        /// Each piece of news may discuss certain issues (nationalism, minority rights, globalization, social justice)
+        /// from an ideological standpoint. If an issue has a factor of 0, it is not being discussed.
+        /// Each discussed issue will first influence the citizen's trust in the network and then it will influence
+        /// his opinions. This influence is determined by:
+        /// -> the citizen's existing opinion (he will lose trust if he doesn't hear what he likes;
+        /// trust is harder to gain when low and harder to lose when high)
+        /// -> the aggressiveness of the news (aggressive news has a bigger impact on opinion, BUT it will also
+        /// alienate those who don't implicitly trust you)
+        /// aggressiveness is between 0 (rational) and 1 (aggressive)
+        /// -> the evidence presented (lack of evidence hurts the trust of every non-fan,
+        /// while plentiful evidence may convince even the most ardent haters;
+        /// rational approach depends far more on evidence to be successful)
+        /// evidenceLvl is between 0 and 1
+        /// To conclude:
+        /// 1. we modify trust based on news factor vs citizen opinion, modified by aggressive and evidence
+        /// 2. we modify opinions based on news factor, modified by aggressive and evidence
         /// </summary>
-        public void reactToNews(int dominantFactor, double factor, double ideologyModif, double nationalismModif,
-            double minorityRightsModif, double isolationismModif, double socialJusticeModif)
+        public void reactToNews(double nationalismFactor, double minorityRightsFactor, double isolationismFactor,
+            double socialJusticeFactor, double ideologyFactor, double aggressiveness, double evidenceLvl)
         {
-            double factorDifference;//the difference between the citizen's beliefs and the news's presentation
-            switch (dominantFactor)
-            {
-                case IDEOLOGY: factorDifference = Math.Abs(ideology - factor);
-                    break;
-                case NATIONALISM: factorDifference = Math.Abs(nationalist - factor);
-                    break;
-                case MINORITY: factorDifference = Math.Abs(minorityRights - factor);
-                    break;
-                case ISOLATIONISM: factorDifference = Math.Abs(isolationism - factor);
-                    break;
-                case SOCIAL_JUSTICE: factorDifference = Math.Abs(socialJustice - factor);
-                    break;
+            double f = 0;//trust gain factor        |
+            double lf = 0;//trust loss factor       | => computed using aggressiveness and evidenceLvl
+            double opf = 0;//opinion change factor  |
+            if (evidenceLvl > 0.5)
+            {//if I have lots of evidence, those with high difference will gain trust instead of losing
+                //rational news - more trust, but greater dependence on evidence, less opinion change
+                if (aggressiveness < 0.1) { f = 0.03 * evidenceLvl; lf = f; opf = 0.01 * evidenceLvl; }
+                else if (aggressiveness < 0.3) { f = 0.02 * evidenceLvl; lf = f; opf = 0.015 * evidenceLvl; }
+                else if (aggressiveness < 0.5) { f = 0.01 * evidenceLvl; lf = f; opf = 0.02 * evidenceLvl; }
+                //aggressive news - less trust gain, more opinion change
+                else if (aggressiveness < 0.7) { f = 0.01 * evidenceLvl; lf = f/2; opf = 0.03 * evidenceLvl; }
+                else if (aggressiveness < 0.9) { f = 0.01 * evidenceLvl; lf = f/2; opf = 0.04 * evidenceLvl; }
+                else  { f = 0.01 * evidenceLvl; lf = f/2; opf = 0.05 * evidenceLvl; }
             }
-        }
+            else
+            {
+                if (aggressiveness < 0.1) { f = 0.03 * evidenceLvl; lf = 0.01 * (1 - evidenceLvl); opf = 0.01 * evidenceLvl; }
+                else if (aggressiveness < 0.3) { f = 0.02 * evidenceLvl; lf = 0.015 * (1 - evidenceLvl); opf = 0.015 * evidenceLvl; }
+                else if (aggressiveness < 0.5) { f = 0.01 * evidenceLvl; lf = 0.02 * (1 - evidenceLvl); opf = 0.02 * evidenceLvl; }
+                else if (aggressiveness < 0.7) { f = 0.01 * evidenceLvl; lf = 0.03 * (1 - evidenceLvl); opf = 0.03 * evidenceLvl; }
+                else if (aggressiveness < 0.9) { f = 0.01 * evidenceLvl; lf = 0.04 * (1 - evidenceLvl); opf = 0.04 * evidenceLvl; }
+                else { f = 0.01 * evidenceLvl; lf = 0.05 * (1 - evidenceLvl); opf = 0.05 * evidenceLvl; }
+            }
 
-        /*public void reactToNews(double nationalismFactor, double minorityRightsFactor, double isolationismFactor,
-            double socialJusticeFactor, double ideologyFactor)
-        {
-             double nationalismDifference = Math.Abs(nationalist - nationalismFactor);
-             if(nationalismDifference<0.05) mediaTrust += mediaTrust * fanaticism * 0.02;
-                else if(nationalismDifference<0.1) mediaTrust += mediaTrust * fanaticism * 0.01;
-                else if(nationalismDifference<0.25) mediaTrust += 0;
-                else if(nationalismDifference<0.5) mediaTrust -= (1 -mediaTrust) * fanaticism * 0.02;
-                else if (nationalismDifference < 0.75) mediaTrust -= (1 - mediaTrust) * fanaticism * 0.05;
-                else if (nationalismDifference < 1) mediaTrust -= (1 - mediaTrust) * fanaticism * 0.1;
-             
-             double isolationismDifference = Math.Abs(isolationism - isolationismFactor);
-             if(isolationismDifference<0.05) mediaTrust += mediaTrust * fanaticism * 0.02;
-                else if(isolationismDifference<0.1) mediaTrust += mediaTrust * fanaticism * 0.01;
-                else if(isolationismDifference<0.25) mediaTrust += 0;
-                else if (isolationismDifference < 0.5) mediaTrust -= (1 - mediaTrust) * fanaticism * 0.02;
-                else if (isolationismDifference < 0.75) mediaTrust -= (1 - mediaTrust) * fanaticism * 0.05;
-                else if (isolationismDifference < 1) mediaTrust -= (1 - mediaTrust) * fanaticism * 0.1;
-             
-             double socialJusticeDifference = Math.Abs(socialJustice - socialJusticeFactor);
-             if(socialJusticeDifference<0.05) mediaTrust += mediaTrust * fanaticism * 0.02;
-                else if(socialJusticeDifference<0.1) mediaTrust += mediaTrust * fanaticism * 0.01;
-                else if(socialJusticeDifference<0.25) mediaTrust += 0;
-                else if (socialJusticeDifference < 0.5) mediaTrust -= (1 - mediaTrust) * fanaticism * 0.02;
-                else if (socialJusticeDifference < 0.75) mediaTrust -= (1 - mediaTrust) * fanaticism * 0.05;
-                else if (socialJusticeDifference < 1) mediaTrust -= (1 - mediaTrust) * fanaticism * 0.1;
-             
-             double ideologyDifference = Math.Abs(ideology - ideologyFactor);
-             if(ideologyDifference<0.05) mediaTrust += mediaTrust * fanaticism * 0.02;
-                else if(ideologyDifference<0.1) mediaTrust += mediaTrust * fanaticism * 0.01;
-                else if(ideologyDifference<0.25) mediaTrust += 0;
-                else if (ideologyDifference < 0.5) mediaTrust -= (1 - mediaTrust) * fanaticism * 0.02;
-                else if (ideologyDifference < 0.75) mediaTrust -= (1 - mediaTrust) * fanaticism * 0.05;
-                else if (ideologyDifference < 1) mediaTrust -= (1 - mediaTrust) * fanaticism * 0.1;
-             
-             
-             double minorityRightsDifference = Math.Abs(minorityRights - minorityRightsFactor);
-             if(minorityRightsDifference<0.05) mediaTrust += mediaTrust * fanaticism * 0.02;
-                else if(minorityRightsDifference<0.1) mediaTrust += mediaTrust * fanaticism * 0.01;
-                else if(minorityRightsDifference<0.25) mediaTrust += 0;
-                else if (minorityRightsDifference < 0.5) mediaTrust -= (1 - mediaTrust) * fanaticism * 0.02;
-                else if (minorityRightsDifference < 0.75) mediaTrust -= (1 - mediaTrust) * fanaticism * 0.05;
-                else if (minorityRightsDifference < 1) mediaTrust -= (1 - mediaTrust) * fanaticism * 0.1;
-        }*/
+            if (evidenceLvl > 0.5)
+            {//if I have lots of evidence, those with high difference will gain trust instead of losing
+                if (nationalismFactor != 0)
+                {
+                    double nationalismDifference = Math.Abs(nationalist - nationalismFactor);
+                    if (nationalismDifference < 0.1) mediaTrust += mediaTrust * fanaticism * f * 2;
+                    else if (nationalismDifference < 0.2) mediaTrust += mediaTrust * fanaticism * f;
+                    else if (nationalismDifference < 0.4) mediaTrust += mediaTrust * (1 - fanaticism) * lf * 0.5;
+                    else if (nationalismDifference < 0.6) mediaTrust += mediaTrust * (1 - fanaticism) * lf * 0.25;
+                    else if (nationalismDifference < 0.8) mediaTrust += mediaTrust * fanaticism * lf * 0.01;
+                    else mediaTrust += 0;
+                    //I used lf instead of f in order to differentiate between aggressive (where lf < f in this case) and rational
+                    //also (1-fanaticism) to illustrate resistance  to being convinced
+                }
+
+                if (isolationismFactor != 0)
+                {
+                    double isolationismDifference = Math.Abs(isolationism - isolationismFactor);
+                    if (isolationismDifference < 0.1) mediaTrust += mediaTrust * fanaticism * f * 2;
+                    else if (isolationismDifference < 0.2) mediaTrust += mediaTrust * fanaticism * f;
+                    else if (isolationismDifference < 0.4) mediaTrust += mediaTrust * (1 - fanaticism) * lf * 0.5;
+                    else if (isolationismDifference < 0.6) mediaTrust += mediaTrust * (1 - fanaticism) * lf * 0.25;
+                    else if (isolationismDifference < 0.8) mediaTrust += mediaTrust * (1 - fanaticism) * lf * 0.01;
+                    else mediaTrust += 0;
+                }
+
+                if (minorityRightsFactor != 0)
+                {
+                    double minorityRightsDifference = Math.Abs(minorityRights - minorityRightsFactor);
+                    if (minorityRightsDifference < 0.1) mediaTrust += mediaTrust * fanaticism * f * 2;
+                    else if (minorityRightsDifference < 0.2) mediaTrust += mediaTrust * fanaticism * f;
+                    else if (minorityRightsDifference < 0.4) mediaTrust += mediaTrust * (1 - fanaticism) * lf * 0.5;
+                    else if (minorityRightsDifference < 0.6) mediaTrust += mediaTrust * (1 - fanaticism) * lf * 0.25;
+                    else if (minorityRightsDifference < 0.8) mediaTrust += mediaTrust * (1 - fanaticism) * lf * 0.01;
+                    else mediaTrust += 0;
+                }
+
+                if (socialJusticeFactor != 0)
+                {
+                    double socialJusticeDifference = Math.Abs(socialJustice - socialJusticeFactor);
+                    if (socialJusticeDifference < 0.1) mediaTrust += mediaTrust * fanaticism * f * 2;
+                    else if (socialJusticeDifference < 0.2) mediaTrust += mediaTrust * fanaticism * f;
+                    else if (socialJusticeDifference < 0.4) mediaTrust += mediaTrust * (1 - fanaticism) * lf * 0.5;
+                    else if (socialJusticeDifference < 0.6) mediaTrust += mediaTrust * (1 - fanaticism) * lf * 0.25;
+                    else if (socialJusticeDifference < 0.8) mediaTrust += mediaTrust * (1 - fanaticism) * lf * 0.01;
+                    else mediaTrust += 0;
+                }
+
+                double ideologyDifference = Math.Abs(ideology - ideologyFactor);
+                if (ideologyDifference < 0.1) mediaTrust += mediaTrust * fanaticism * f * 2;
+                else if (ideologyDifference < 0.2) mediaTrust += mediaTrust * fanaticism * f;
+                else if (ideologyDifference < 0.4) mediaTrust += mediaTrust * (1 - fanaticism) * lf * 0.5;
+                else if (ideologyDifference < 0.6) mediaTrust += mediaTrust * (1 - fanaticism) * lf * 0.25;
+                else if (ideologyDifference < 0.8) mediaTrust += mediaTrust * (1 - fanaticism) * lf * 0.01;
+                else mediaTrust += 0;
+            }
+            else
+            {
+                if (nationalismFactor != 0)
+                {
+                    double nationalismDifference = Math.Abs(nationalist - nationalismFactor);
+                    if (nationalismDifference < 0.1) mediaTrust += mediaTrust * fanaticism * f * 2;
+                    else if (nationalismDifference < 0.2) mediaTrust += mediaTrust * fanaticism * f;
+                    else if (nationalismDifference < 0.4) mediaTrust += 0;
+                    else if (nationalismDifference < 0.6) mediaTrust -= (1 - mediaTrust) * fanaticism * lf;
+                    else if (nationalismDifference < 0.8) mediaTrust -= (1 - mediaTrust) * fanaticism * lf * 2;
+                    else mediaTrust -= (1 - mediaTrust) * fanaticism * lf * 3;
+                }
+
+                if (isolationismFactor != 0)
+                {
+                    double isolationismDifference = Math.Abs(isolationism - isolationismFactor);
+                    if (isolationismDifference < 0.1) mediaTrust += mediaTrust * fanaticism * f * 2;
+                    else if (isolationismDifference < 0.2) mediaTrust += mediaTrust * fanaticism * f;
+                    else if (isolationismDifference < 0.4) mediaTrust += 0;
+                    else if (isolationismDifference < 0.6) mediaTrust -= (1 - mediaTrust) * fanaticism * lf;
+                    else if (isolationismDifference < 0.8) mediaTrust -= (1 - mediaTrust) * fanaticism * lf * 2;
+                    else mediaTrust -= (1 - mediaTrust) * fanaticism * lf * 3;
+                }
+
+                if (minorityRightsFactor != 0)
+                {
+                    double minorityRightsDifference = Math.Abs(minorityRights - minorityRightsFactor);
+                    if (minorityRightsDifference < 0.1) mediaTrust += mediaTrust * fanaticism * f * 2;
+                    else if (minorityRightsDifference < 0.2) mediaTrust += mediaTrust * fanaticism * f;
+                    else if (minorityRightsDifference < 0.4) mediaTrust += 0;
+                    else if (minorityRightsDifference < 0.6) mediaTrust -= (1 - mediaTrust) * fanaticism * lf;
+                    else if (minorityRightsDifference < 0.8) mediaTrust -= (1 - mediaTrust) * fanaticism * lf * 2;
+                    else mediaTrust -= (1 - mediaTrust) * fanaticism * lf * 3;
+                }
+
+                if (socialJusticeFactor != 0)
+                {
+                    double socialJusticeDifference = Math.Abs(socialJustice - socialJusticeFactor);
+                    if (socialJusticeDifference < 0.1) mediaTrust += mediaTrust * fanaticism * f * 2;
+                    else if (socialJusticeDifference < 0.2) mediaTrust += mediaTrust * fanaticism * f;
+                    else if (socialJusticeDifference < 0.4) mediaTrust += 0;
+                    else if (socialJusticeDifference < 0.6) mediaTrust -= (1 - mediaTrust) * fanaticism * lf;
+                    else if (socialJusticeDifference < 0.8) mediaTrust -= (1 - mediaTrust) * fanaticism * lf * 2;
+                    else mediaTrust -= (1 - mediaTrust) * fanaticism * lf * 3;
+                }
+
+                double ideologyDifference = Math.Abs(ideology - ideologyFactor);
+                if (ideologyDifference < 0.1) mediaTrust += mediaTrust * fanaticism * f * 2;
+                else if (ideologyDifference < 0.2) mediaTrust += mediaTrust * fanaticism * f;
+                else if (ideologyDifference < 0.4) mediaTrust += 0;
+                else if (ideologyDifference < 0.6) mediaTrust -= (1 - mediaTrust) * fanaticism * lf;
+                else if (ideologyDifference < 0.8) mediaTrust -= (1 - mediaTrust) * fanaticism * lf * 2;
+                else mediaTrust -= (1 - mediaTrust) * fanaticism * lf * 3;
+            }
+            nationalist += nationalismFactor * mediaTrust * opf;
+            isolationism += isolationismFactor * mediaTrust * opf;
+            minorityRights += minorityRightsFactor * mediaTrust * opf;
+            socialJustice += socialJusticeFactor * mediaTrust * opf;
+            ideology += ideologyFactor * mediaTrust * opf * 0.5;//ideology should be harder to change :-?
+        }
 
         /// <summary>
         /// Compute the citizen's political preference. The Option with the most votes gives us the ending.

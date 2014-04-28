@@ -96,9 +96,9 @@ namespace journalism_thingie
             int pro = 0, meh = 0, anti = 0;
             foreach (Citizen kane in pop)
             {
-                if (kane.nationalist < -0.4)
+                if (kane.nationalist < -0.33)
                     anti++;
-                else if (kane.nationalist < 0.4)
+                else if (kane.nationalist < 0.33)
                     meh++;
                 else
                     pro++;
@@ -117,9 +117,9 @@ namespace journalism_thingie
             pro = 0; meh = 0; anti = 0;
             foreach (Citizen kane in pop)
             {
-                if (kane.minorityRights < -0.4)
+                if (kane.minorityRights < -0.33)
                     anti++;
-                else if (kane.minorityRights < 0.4)
+                else if (kane.minorityRights < 0.33)
                     meh++;
                 else
                     pro++;
@@ -138,9 +138,9 @@ namespace journalism_thingie
             pro = 0; meh = 0; anti = 0;
             foreach (Citizen kane in pop)
             {
-                if (kane.isolationism < -0.4)
+                if (kane.isolationism < -0.33)
                     anti++;
-                else if (kane.isolationism < 0.4)
+                else if (kane.isolationism < 0.33)
                     meh++;
                 else
                     pro++;
@@ -159,9 +159,9 @@ namespace journalism_thingie
             pro = 0; meh = 0; anti = 0;
             foreach (Citizen kane in pop)
             {
-                if (kane.socialJustice < -0.4)
+                if (kane.socialJustice < -0.33)
                     anti++;
-                else if (kane.socialJustice < 0.4)
+                else if (kane.socialJustice < 0.33)
                     meh++;
                 else
                     pro++;

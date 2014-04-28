@@ -37,6 +37,7 @@ namespace journalism_thingie
         public const byte NOTEPAD = 1;//the part where you make your choice
         public const byte FOCUS_GROUP = 2;//view info about the focus group
         public const byte WATCH_NEWS = 3;//watch your decision unfold on tv
+        private int day = 1;//contorizam la ce zi am ajuns ca sa stim ce date sa accesam
 
         public Game()
         {
