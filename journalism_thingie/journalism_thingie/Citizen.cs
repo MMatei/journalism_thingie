@@ -125,6 +125,8 @@ namespace journalism_thingie
         public void reactToNews(double nationalismFactor, double minorityRightsFactor, double isolationismFactor,
             double socialJusticeFactor, double ideologyFactor, double aggressiveness, double evidenceLvl)
         {
+            mediaTrust += 0.1;//temporary modifier to ensure that even haters can be influenced
+            // remember it's mediaTrust * ....
             double f = 0;//trust gain factor        |
             double lf = 0;//trust loss factor       | => computed using aggressiveness and evidenceLvl
             double opf = 0;//opinion change factor  |
@@ -259,6 +261,8 @@ namespace journalism_thingie
                 else if (ideologyDifference < 0.8) mediaTrust -= (1 - mediaTrust) * fanaticism * lf * 2;
                 else mediaTrust -= (1 - mediaTrust) * fanaticism * lf * 3;
             }
+            mediaTrust -= 0.1;//mediaTrust is restored to its previous condition
+            if (mediaTrust < 0) mediaTrust = 0;//stop trust from derailing towards -inf
             nationalist += nationalismFactor * mediaTrust * opf;
             isolationism += isolationismFactor * mediaTrust * opf;
             minorityRights += minorityRightsFactor * mediaTrust * opf;
