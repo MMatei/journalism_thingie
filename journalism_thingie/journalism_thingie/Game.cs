@@ -26,17 +26,20 @@ namespace journalism_thingie
         private KeyboardState keyPrevious;
 
         //Textures and their rectangles
-        private Texture2D background, notepad, tvBackground;
-        private Rectangle backgroundRect, notepadRect, tvRect;
+        private RenderTarget2D focusGroupViewSnapshot, notepadSnapshot;
+        private Texture2D background, notepad, tvBackground, room;
+        private Rectangle backgroundRect, notepadRect, tvRect, snapshotRect, notepadSnapshotRect;
         private SpriteFont notepadFont, subtitleFont;
         private TextAreaChoice notepadChoice;
         private SubtitleArea tvSpeech;
 
         // Game State - we need to keep track of where we are to know what to draw and what input to receive
         public byte gameState;
+        public const byte ROOM = 0;//choice between notepad, focus group view and watch tv
         public const byte NOTEPAD = 1;//the part where you make your choice
         public const byte FOCUS_GROUP = 2;//view info about the focus group
         public const byte WATCH_NEWS = 3;//watch your decision unfold on tv
+        public const byte TRANSITION = 4;//transition animation; controls disabled
         private int day = 1;//contorizam la ce zi am ajuns ca sa stim ce date sa accesam
 
         public Game()
@@ -59,7 +62,7 @@ namespace journalism_thingie
             this.IsMouseVisible = true;
             spriteBatch = new SpriteBatch(GraphicsDevice);
             base.Initialize();
-            gameState = FOCUS_GROUP;
+            gameState = ROOM;
             keyPrevious = Keyboard.GetState();
         }
 
@@ -73,6 +76,7 @@ namespace journalism_thingie
             notepadRect = new Rectangle((int)(screenW * 0.2), (int)(screenH * 0.1), (int)(screenW * 0.6), (int)(screenH * 0.8));
             background = Content.Load<Texture2D>("background");
             backgroundRect = new Rectangle(0, 0, screenW, screenH);
+            room = Content.Load<Texture2D>("theroom");
             tvBackground = Content.Load<Texture2D>("tv-pdf");
             tvRect = new Rectangle(0, 0, screenW, screenH);
             notepadFont = Content.Load<SpriteFont>("notepadFont");
@@ -123,6 +127,13 @@ namespace journalism_thingie
             tvSpeech = new SubtitleArea(spriteBatch, subtitleFont, (int)(screenW * 0.1), (int)(screenH * 0.6), (int)(screenW * 0.8), (int)(screenH * 0.1));
             focusGroupView = new FocusGroupView(GraphicsDevice, spriteBatch, Content, notepadFont, background, screenW, screenH);
             focusGroupView.prepare(population);
+            focusGroupViewSnapshot = new RenderTarget2D(GraphicsDevice, screenW, screenH);
+            notepadSnapshot = new RenderTarget2D(GraphicsDevice, screenW, screenH);
+            // la dimensiunile originale, ar trebui sa inceapa de la 380x105 (imaginea orig e de 1920x1080)
+            // fractiile de width si height recomand sa fie egale ca sa se pastreze proportiile ecranului pe care se joaca
+            snapshotRect = new Rectangle((int)(screenW * 0.2), (int)(screenH * 0.098), (int)(screenW * 0.25), (int)(screenH * 0.25));
+            notepadSnapshotRect = new Rectangle((int)(screenW * 0.48), (int)(screenH * 0.63), (int)(screenW * 0.15), (int)(screenH * 0.2));
+            Console.WriteLine(focusGroupViewSnapshot.Bounds);
             Console.WriteLine(endgame());
         }
 
@@ -151,7 +162,7 @@ namespace journalism_thingie
             }
             break;
             case FOCUS_GROUP: {
-                focusGroupView.draw();
+                focusGroupView.draw(null);
             }
             break;
             case WATCH_NEWS:
@@ -159,6 +170,23 @@ namespace journalism_thingie
                 spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.NonPremultiplied, null, null, null);
                 spriteBatch.Draw(tvBackground, tvRect, null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, 0.0f);
                 tvSpeech.draw();
+                spriteBatch.End();
+            }
+            break;
+            case ROOM:
+            {
+                focusGroupView.draw(focusGroupViewSnapshot);
+                GraphicsDevice.SetRenderTarget(notepadSnapshot);
+                spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.NonPremultiplied, null, null, null);
+                spriteBatch.Draw(background, backgroundRect, null, Color.DarkBlue, 0.0f, Vector2.Zero, SpriteEffects.None, 0.0f);
+                spriteBatch.Draw(notepad, notepadRect, null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, 0.5f);
+                notepadChoice.draw();
+                spriteBatch.End();
+                GraphicsDevice.SetRenderTarget(null);
+                spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.NonPremultiplied, null, null, null);
+                spriteBatch.Draw(room, backgroundRect, null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, 0.0f);
+                spriteBatch.Draw(focusGroupViewSnapshot, snapshotRect, null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, 0.5f);
+                spriteBatch.Draw(notepadSnapshot, notepadSnapshotRect, null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, 0.5f);
                 spriteBatch.End();
             }
             break;

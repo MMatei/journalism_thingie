@@ -36,7 +36,7 @@ namespace journalism_thingie
             for (int i = 0; i < 6; i++)
             {
                 piechart[i] = new Piechart2D(gdi, content, temp, 600, 600);
-                piechartTexture[i] = new RenderTarget2D(gdi, 600, 600, false, gdi.PresentationParameters.BackBufferFormat, DepthFormat.Depth24);
+                piechartTexture[i] = new RenderTarget2D(gdi, 600, 600);
             }
             piechartRect[0] = new Rectangle(0, 0, (int)(screenW * 0.22), (int)(screenW * 0.22));
             piechartRect[1] = new Rectangle((int)(screenW * 0.33), 0, (int)(screenW * 0.22), (int)(screenW * 0.22));
@@ -198,7 +198,7 @@ namespace journalism_thingie
             #endregion
         }
 
-        public void draw()
+        public void draw(RenderTarget2D renderTarget)
         {
             /*personRect.X = -personRect.Width;
             personRect.Y = 0;
@@ -231,7 +231,7 @@ namespace journalism_thingie
                 gdi.SetRenderTarget(piechartTexture[i]);
                 piechart[i].draw();
             }
-            gdi.SetRenderTarget(null);
+            gdi.SetRenderTarget(renderTarget);
             spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.NonPremultiplied, null, null, null);
             spriteBatch.Draw(background, backgroundRect, null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, 0.0f);
             for (int i = 0; i < 6; i++)

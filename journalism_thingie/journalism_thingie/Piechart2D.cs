@@ -66,7 +66,6 @@ namespace journalism_thingie
             world = Matrix.CreateTranslation(0, 0, 0);
             view = Matrix.CreateLookAt(new Vector3(0, 0, 2), new Vector3(0, 0, 0), new Vector3(0, 1, 0));
             projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(90), (float)screenW / (float)screenH, 0.1f, 100f);
-            Console.WriteLine(Vector3.Transform(Vector3.Transform(Vector3.Transform(new Vector3(1,0,0), world),view),projection));
         }
 
         public void setPiechart(List<int> slicePerecentage, List<Color> sliceColor, List<String> descr)

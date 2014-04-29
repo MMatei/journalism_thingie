@@ -32,6 +32,13 @@ namespace journalism_thingie
                             gameState = WATCH_NEWS;
                             tvSpeech.setText(crrtNews.options[ret].newsArticle);
                         }
+                        else
+                        {
+                            if (keyCurrent.IsKeyDown(Keys.Enter))
+                            {
+                                gameState = ROOM;
+                            }
+                        }
                     }
                     break;
                 case FOCUS_GROUP:
@@ -39,16 +46,31 @@ namespace journalism_thingie
                         int ret = focusGroupView.update(mouseStateCurrent, mousePrevious, keyCurrent, gameTime);
                         if (ret == 1)
                         {
-                            gameState = NOTEPAD;
+                            gameState = ROOM;
                         }
                     }
                     break;
                 case WATCH_NEWS:
                     {
                         if (tvSpeech.update(keyCurrent, keyPrevious) == 1)
-                            gameState = NOTEPAD;
+                            gameState = ROOM;
                     }
                     break;
+                case ROOM:
+                {
+                    if (mouseStateCurrent.LeftButton == ButtonState.Pressed)
+                    {
+                        if (snapshotRect.Contains(mouseStateCurrent.X, mouseStateCurrent.Y))
+                        {//am dat click pe tabla cu focus view
+                            gameState = FOCUS_GROUP;
+                        }
+                        if (notepadSnapshotRect.Contains(mouseStateCurrent.X, mouseStateCurrent.Y))
+                        {//am dat click pe notepad
+                            gameState = NOTEPAD;
+                        }
+                    }
+                }
+                break;
             }
             keyPrevious = keyCurrent;
             mousePrevious = mouseStateCurrent;
