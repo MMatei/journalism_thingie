@@ -40,17 +40,18 @@ namespace journalism_thingie
                 while (s.StartsWith("#"))
                     s = file.ReadLine();
                 String[] word = s.Split(';');
-                options[i].nationalismFactor = Convert.ToDouble(word[0]);
-                options[i].minorityRightsFactor = Convert.ToDouble(word[1]);
-                options[i].isolationismFactor = Convert.ToDouble(word[2]);
-                options[i].socialJusticeFactor = Convert.ToDouble(word[3]);
-                options[i].ideologyFactor = Convert.ToDouble(word[4]);
+                options[i].nationalismFactor = Convert.ToDouble(word[0], Game.cultureInfo);
+                options[i].minorityRightsFactor = Convert.ToDouble(word[1], Game.cultureInfo);
+                options[i].isolationismFactor = Convert.ToDouble(word[2], Game.cultureInfo);
+                options[i].socialJusticeFactor = Convert.ToDouble(word[3], Game.cultureInfo);
+                options[i].ideologyFactor = Convert.ToDouble(word[4], Game.cultureInfo);
+                options[i].aggressiveness = Convert.ToDouble(word[5], Game.cultureInfo);
             }
         }
     }
     class Option
     {
-        public double nationalismFactor, minorityRightsFactor, isolationismFactor, socialJusticeFactor, ideologyFactor;
+        public double nationalismFactor, minorityRightsFactor, isolationismFactor, socialJusticeFactor, ideologyFactor, aggressiveness;
         public String description;//the short version you see on your notepad
         public String newsArticle;//the thing that gets read on the telly screen
     }

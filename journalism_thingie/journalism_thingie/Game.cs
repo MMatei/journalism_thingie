@@ -22,7 +22,7 @@ namespace journalism_thingie
         private Citizen[] population = new Citizen[100];
         private FocusGroupView focusGroupView;
         private News crrtNews;
-        private MouseState mousePrevious;
+        public static MouseState mousePrevious;
         private KeyboardState keyPrevious;
 
         //Textures and their rectangles
@@ -41,6 +41,18 @@ namespace journalism_thingie
         public const byte WATCH_NEWS = 3;//watch your decision unfold on tv
         public const byte TRANSITION = 4;//transition animation; controls disabled
         private int day = 1;//contorizam la ce zi am ajuns ca sa stim ce date sa accesam
+
+        /// <summary>
+        /// now here we have a bit of cultural shock ;))
+        /// you see, C# Convert functions take into consideration cultural aspects when converting
+        /// thus we must ensure a standard; this is important for floats, where there are varying notations, such as 1,0 and 1.0
+        /// IMPORTANT: we don't use cultureInfo for config.ini, because some pinhead at M$ decided it'd be a good ideea
+        /// if WriteLine took into consideration culture by default, while at the same time not providing a way to change this moronic behaviour
+        /// as a bottom line, use culturalInfo wherever we read files shipped with the game - 'cause they're written using a global standard
+        /// don't use it when reading/writing local files - the local standard will suffice
+        /// If you have further questions on the subject, I suggest burning down your nearest M$ office.
+        /// </summary>
+        public static System.Globalization.CultureInfo cultureInfo = new System.Globalization.CultureInfo("en-US");
 
         public Game()
         {
@@ -133,7 +145,6 @@ namespace journalism_thingie
             // fractiile de width si height recomand sa fie egale ca sa se pastreze proportiile ecranului pe care se joaca
             snapshotRect = new Rectangle((int)(screenW * 0.2), (int)(screenH * 0.098), (int)(screenW * 0.25), (int)(screenH * 0.25));
             notepadSnapshotRect = new Rectangle((int)(screenW * 0.48), (int)(screenH * 0.63), (int)(screenW * 0.15), (int)(screenH * 0.2));
-            Console.WriteLine(focusGroupViewSnapshot.Bounds);
             Console.WriteLine(endgame());
         }
 
@@ -155,7 +166,7 @@ namespace journalism_thingie
             switch(gameState){
             case NOTEPAD: {
                 spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.NonPremultiplied, null, null, null);
-                spriteBatch.Draw(background, backgroundRect, null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, 0.0f);
+                spriteBatch.Draw(background, backgroundRect, null, Color.Navy, 0.0f, Vector2.Zero, SpriteEffects.None, 0.0f);
                 spriteBatch.Draw(notepad, notepadRect, null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, 0.5f);
                 notepadChoice.draw();
                 spriteBatch.End();
@@ -178,7 +189,7 @@ namespace journalism_thingie
                 focusGroupView.draw(focusGroupViewSnapshot);
                 GraphicsDevice.SetRenderTarget(notepadSnapshot);
                 spriteBatch.Begin(SpriteSortMode.FrontToBack, BlendState.NonPremultiplied, null, null, null);
-                spriteBatch.Draw(background, backgroundRect, null, Color.DarkBlue, 0.0f, Vector2.Zero, SpriteEffects.None, 0.0f);
+                spriteBatch.Draw(background, backgroundRect, null, Color.Navy, 0.0f, Vector2.Zero, SpriteEffects.None, 0.0f);
                 spriteBatch.Draw(notepad, notepadRect, null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, 0.5f);
                 notepadChoice.draw();
                 spriteBatch.End();

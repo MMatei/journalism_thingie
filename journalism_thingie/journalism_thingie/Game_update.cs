@@ -26,7 +26,7 @@ namespace journalism_thingie
             {
                 case NOTEPAD:
                     {
-                        int ret = notepadChoice.update(mouseStateCurrent);
+                        int ret = notepadChoice.update(mouseStateCurrent, keyCurrent);
                         if (ret != -1)
                         {
                             gameState = WATCH_NEWS;
