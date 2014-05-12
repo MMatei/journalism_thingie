@@ -18,59 +18,65 @@ namespace journalism_thingie
         {
             KeyboardState keyCurrent = Keyboard.GetState();
             MouseState mouseStateCurrent = Mouse.GetState();
-            // Allows the game to exit
-            if (keyCurrent.IsKeyDown(Keys.Escape))
-                this.Exit();
 
             switch (gameState)
             {
                 case NOTEPAD:
+                {
+                    int ret = notepadChoice.update(mouseStateCurrent, keyCurrent);
+                    if (ret != -1)
                     {
-                        int ret = notepadChoice.update(mouseStateCurrent, keyCurrent);
-                        if (ret != -1)
-                        {
-                            gameState = WATCH_NEWS;
-                            tvSpeech.setText(crrtNews.options[ret].newsArticle);
-                        }
-                        else
-                        {
-                            if (keyCurrent.IsKeyDown(Keys.Enter))
-                            {
-                                gameState = ROOM;
-                            }
-                        }
+                        gameState = WATCH_NEWS;
+                        tvSpeech.setText(crrtNews.options[ret].newsArticle);
                     }
-                    break;
-                case FOCUS_GROUP:
+                    else
                     {
-                        int ret = focusGroupView.update(mouseStateCurrent, mousePrevious, keyCurrent, gameTime);
-                        if (ret == 1)
+                        if (keyCurrent.IsKeyDown(Keys.Enter))
                         {
                             gameState = ROOM;
                         }
                     }
-                    break;
-                case WATCH_NEWS:
+                }
+                break;
+                case FOCUS_GROUP:
+                {
+                    int ret = focusGroupView.update(mouseStateCurrent, mousePrevious, keyCurrent, gameTime);
+                    if (ret == 1)
                     {
-                        if (tvSpeech.update(keyCurrent, keyPrevious) == 1)
+                        gameState = ROOM;
+                    }
+                }
+                break;
+                case WATCH_NEWS:
+                {
+                    if (tvSpeech.update(keyCurrent, keyPrevious) == 1)
+                    {
+                        day++;//the choice has been made, we move on to the next day
+                        if (!File.Exists("news/" + day + ".txt"))
+                        {//endgame
+                            tvSpeech.setText(endgame());
+                            gameState = ENDGAME;
+                        }
+                        else
                         {
-                            day++;//the choice has been made, we move on to the next day
-                            if (!File.Exists("news/" + day + ".txt"))
-                            {//endgame
-                                Console.WriteLine(endgame());
-                                this.Exit();//Exit doesn't immediately terminate the game
-                            }//therefore, else is neccessary
-                            else
+                            crrtNews = new News("news/" + day + ".txt");
+                            String[] choices = new String[crrtNews.options.Length];
+                            int j = 0;
+                            foreach (Option o in crrtNews.options)
                             {
-                                crrtNews = new News("news/" + day + ".txt");
-                                focusGroupView.prepare(population);
-                                gameState = ROOM;
+                                choices[j++] = o.description;
                             }
+                            notepadChoice.setText(crrtNews.situationDescription, choices);
+                            focusGroupView.prepare(population);
+                            gameState = ROOM;
                         }
                     }
-                    break;
+                }
+                break;
                 case ROOM:
                 {
+                    if (keyCurrent.IsKeyDown(Keys.Escape))
+                        this.Exit();
                     if (mouseStateCurrent.LeftButton == ButtonState.Pressed)
                     {
                         if (snapshotRect.Contains(mouseStateCurrent.X, mouseStateCurrent.Y))
@@ -81,6 +87,35 @@ namespace journalism_thingie
                         {//am dat click pe notepad
                             gameState = NOTEPAD;
                         }
+                    }
+                }
+                break;
+                case ENDGAME:
+                {
+                    if (keyCurrent.IsKeyDown(Keys.Escape))
+                        this.Exit();
+                    if (tvSpeech.update(keyCurrent, keyPrevious) == 1)
+                        this.Exit();
+                }
+                break;
+                case SPLASH_SCREEN:
+                {
+                    day++;
+                    if (day == 100)
+                    {
+                        day = 1;
+                        gameState = MAIN_MENU;
+                    }
+                }
+                break;
+                case MAIN_MENU:
+                {
+                    if(mouseStateCurrent.LeftButton == ButtonState.Pressed)
+                    {
+                        if(newGameRect.Contains(mouseStateCurrent.X, mouseStateCurrent.Y))
+                            gameState = ROOM;
+                        if(quitRect.Contains(mouseStateCurrent.X, mouseStateCurrent.Y))
+                            this.Exit();
                     }
                 }
                 break;

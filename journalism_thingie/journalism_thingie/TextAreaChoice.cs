@@ -12,7 +12,7 @@ namespace journalism_thingie
     {
         private SpriteBatch spriteBatch;
         private SpriteFont font;
-        private List<String> description = new List<String>();
+        private List<String> description;
         private List<String>[] choice;
         private int height, width;
         private Vector2 start;
@@ -31,6 +31,7 @@ namespace journalism_thingie
 
         public void setText(String descr, String[] choice)
         {
+            description = new List<String>();
             int spaceSize = (int)font.MeasureString(" ").X;
             int textHeight = 0;//we measure height to determine if we need a second page
             //trebuie sa impartim descrierea pe linii, pt ca: primim 1 sir si DrawString deseneaza doar pe o linie continua

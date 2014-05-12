@@ -101,7 +101,10 @@ namespace journalism_thingie
             {
                 crrtLine += 2;
                 if (crrtLine >= text.Count)
+                {
+                    crrtLine -= 2;
                     return 1;//end of the line
+                }
             }
             return 0;
         }
