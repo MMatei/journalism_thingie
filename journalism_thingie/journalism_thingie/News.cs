@@ -10,6 +10,7 @@ namespace journalism_thingie
     {
         public String situationDescription;
         public Option[] options;
+        private static Random rand = new Random();
         /// <summary>
         /// The constructor receives the name of the file it will use to populate its fields.
         /// </summary>
@@ -46,12 +47,23 @@ namespace journalism_thingie
                 options[i].socialJusticeFactor = Convert.ToDouble(word[3], Game.cultureInfo);
                 options[i].ideologyFactor = Convert.ToDouble(word[4], Game.cultureInfo);
                 options[i].aggressiveness = Convert.ToDouble(word[5], Game.cultureInfo);
+                options[i].evidenceLvl = Convert.ToDouble(word[6], Game.cultureInfo);
+                options[i].evidenceLvl *= rand.NextDouble();
+                options[i].description += " (we have ";
+                if (options[i].evidenceLvl < 0.33)
+                    options[i].description += "weak ";
+                else if (options[i].evidenceLvl < 0.66)
+                    options[i].description += "some ";
+                else
+                    options[i].description += "strong ";
+                options[i].description += "evidence to back this news)";
             }
         }
     }
     class Option
     {
-        public double nationalismFactor, minorityRightsFactor, isolationismFactor, socialJusticeFactor, ideologyFactor, aggressiveness;
+        public double nationalismFactor, minorityRightsFactor, isolationismFactor, socialJusticeFactor, ideologyFactor,
+            aggressiveness, evidenceLvl;
         public String description;//the short version you see on your notepad
         public String newsArticle;//the thing that gets read on the telly screen
     }

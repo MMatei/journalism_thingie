@@ -21,7 +21,7 @@ namespace journalism_thingie
         private static Effect effect;//one effect to draw them all
         private static GraphicsDevice gdi;
         private static Texture2D circle;
-        internal List<PieSlice> slices = new List<PieSlice>();
+        internal List<PieSlice> slices;
         private Matrix world;
         private Matrix view;
         private Matrix projection;
@@ -80,6 +80,7 @@ namespace journalism_thingie
                 return;
             }
             // and now for the main event
+            slices = new List<PieSlice>();
             int point = 0;//we start from the first point, 0
             for (int i = 0; i < slicePerecentage.Count; i++)
             {

@@ -127,7 +127,7 @@ namespace journalism_thingie
             Console.WriteLine("Middle ground: " + nrmed);
             Console.WriteLine("Overly fanatic: " + nrmax);
 
-            crrtNews = new News("news.txt");
+            crrtNews = new News("news/1.txt");
             String[] choices = new String[crrtNews.options.Length];
             int j = 0;
             foreach (Option o in crrtNews.options)
@@ -145,7 +145,6 @@ namespace journalism_thingie
             // fractiile de width si height recomand sa fie egale ca sa se pastreze proportiile ecranului pe care se joaca
             snapshotRect = new Rectangle((int)(screenW * 0.2), (int)(screenH * 0.098), (int)(screenW * 0.25), (int)(screenH * 0.25));
             notepadSnapshotRect = new Rectangle((int)(screenW * 0.48), (int)(screenH * 0.63), (int)(screenW * 0.15), (int)(screenH * 0.2));
-            Console.WriteLine(endgame());
         }
 
         /// <summary>

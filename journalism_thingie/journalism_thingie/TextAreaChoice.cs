@@ -73,8 +73,10 @@ namespace journalism_thingie
                     else
                     {
                         textHeight += font.LineSpacing;
-                        if (textHeight > height * 0.8)
-                        {
+                        //daca optiunea trece peste marginea de jos, o punem ca fiind prima de pe pag2
+                        // (vezi codul de draw)
+                        if (textHeight > height * 0.9 && !hasSecondPage)
+                        {//conditia de !hasSecondPage pusa pt a evita suprascrierea lui secondPageChoice
                             hasSecondPage = true;
                             secondPageChoice = i;
                         }

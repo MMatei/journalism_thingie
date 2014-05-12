@@ -53,7 +53,20 @@ namespace journalism_thingie
                 case WATCH_NEWS:
                     {
                         if (tvSpeech.update(keyCurrent, keyPrevious) == 1)
-                            gameState = ROOM;
+                        {
+                            day++;//the choice has been made, we move on to the next day
+                            if (!File.Exists("news/" + day + ".txt"))
+                            {//endgame
+                                Console.WriteLine(endgame());
+                                this.Exit();//Exit doesn't immediately terminate the game
+                            }//therefore, else is neccessary
+                            else
+                            {
+                                crrtNews = new News("news/" + day + ".txt");
+                                focusGroupView.prepare(population);
+                                gameState = ROOM;
+                            }
+                        }
                     }
                     break;
                 case ROOM:

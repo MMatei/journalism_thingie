@@ -1,0 +1,14 @@
+Admanian Finance Minister Fridick denies the authenticity of the recorded conversation between him and Garry Gadmaniv.
+4
+1. [Aggressive] Support Fridick and blame foreign interests
+It should be clear as day to everyone that this tape is a fake, designed by foreign interests in order to destabilise the Admanian government. Such is the deplorable world we live in, dear viewers!
+0;0;-0.5;0;-0.5;0.25;0.5
+2. [Rational] Prove the tape cannot be a fake
+The tape couldn't have possibly been forged; we have interviewed several experts and they all agree that the tape is authentic. Clearly Minister Fridick is trying to avoid responsability.
+0;0;0;0.5;0;1.0;1.0
+3. [Aggressive] Accuse the Admanian governmnet of covering up the incident
+The tape is definitely real - it is shocking to see the Admanian government orchestrating a cover up of this magnitude!
+-0.1;0;0;0.1;0;0.3;1.0
+4. [Rational] The tape may or may not be real
+The tape may or may not be real - we cannot know for certain. But either way, this is a most scandalous affair.
+0;0;0;0;0;1.0;0.8
