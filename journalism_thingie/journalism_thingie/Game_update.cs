@@ -14,6 +14,33 @@ namespace journalism_thingie
 {
     public partial class Game
     {
+        internal void SaveGame(String saveFileName)
+        {
+            StreamWriter savefile = new StreamWriter(saveFileName);
+            savefile.WriteLine(day);
+            foreach (Citizen c in population)
+            {
+                savefile.WriteLine(c.lifeQuality + ";" + c.fanaticism + ";" + c.ideology + ";" + c.nationalist + ";" +
+                    c.minorityRights + ";" + c.isolationism + ";" + c.socialJustice + ";" + c.mediaTrust);
+            }
+        }
+        internal void LoadGame(String saveFileName)
+        {
+            StreamReader savefile = new StreamReader(saveFileName);
+            day = Convert.ToInt32(savefile.ReadLine());
+            foreach (Citizen c in population)
+            {
+                String[] word = savefile.ReadLine().Split(';');
+                c.lifeQuality = Convert.ToDouble(word[0]);
+                c.fanaticism = Convert.ToDouble(word[1]);
+                c.ideology = Convert.ToDouble(word[2]);
+                c.nationalist = Convert.ToDouble(word[3]);
+                c.minorityRights = Convert.ToDouble(word[4]);
+                c.isolationism = Convert.ToDouble(word[5]);
+                c.socialJustice = Convert.ToDouble(word[6]);
+                c.mediaTrust = Convert.ToDouble(word[7]);
+            }
+        }
         protected override void Update(GameTime gameTime)
         {
             KeyboardState keyCurrent = Keyboard.GetState();

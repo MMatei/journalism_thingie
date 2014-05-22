@@ -9,28 +9,28 @@ Garry Gadmaniv, one of the richest bussinessmen in Admania is caught on tape dis
 Mr. Gadmaniv has known connections to some of the world's largest corporations. Clearly he is acting on their behalf as he attempts to purchase Admanian industries. He seeks to expand undue foreign influences in Admania and bring the country's economy under full control of the mega-corporations. These, dear viewers, are the dangers of this so-called 'globalization'.
 #modifiers
 #nationalism, minority, isolationism, social justice, ideology, agggressiveness, potential evidence
-0;0;-0.1;0;0.2;0.2;0.2
+0;0;-0.1;0;0.2;0.8;0.2
 #choice 2
 2. [Aggressive] Use the incident as proof of the deep-rooted corruption of the Admanian government and ask how can we let territory inhabited by Tolozians be dilapidated by corrupt foreigners
 Mr. Gadmaniv has known connections to many important politicians in the Admanian government AND Parliament. It is clear that financial interests govern Admania, not the people. It is truly deplorable that native Tolozians have to live under such a corrupt and self-absorbed government.
-0,1;0;0;0;0.1;0.0;0.1
+0,1;0;0;0;0.1;1.0;0.1
 #choice 3
 3. [Rational] Question the ability of the Admanian government to take the best decisions for the Tolozian minority
 We can link Mr. Gadmaniv to several important politicians in the Admanian government and Parliament. Therefore, we must ask ourselves whether this corrupt government rules in the best interest of all its citizens. Our Tolozian minority has no rich bussinessmen pushing their interest in the government.
-0,1;0;0;0;0.1;0.6;0.1
+0,1;0;0;0;0.1;0.4;0.1
 #choice 4
 4. [Aggressive] Use the incident to remind people of the corruption in Tolozia
 This scandal should remind us all of what goes on in our own country! The Tolozian government has its own history of corruption. Who knows how many Gadmanivs have already influenced the government to do their bidding?
-0;0;0;0.1;0.8;0.3;0.3
+0;0;0;0.1;0.8;0.7;0.3
 #choice 5
 5. [Rational] Use the incident to lament the power big bussinesses can have over government
 This is not the first such incident in the world. It is quite clear that the enourmous financial resources at the disposal of big bussinesses are more than enough to influence, if not outright bribe members of parliament or government ministers. How can we preserve the integrity of our elected officials under these circumstances?
-0;0;-0.1;0.1;0.5;1.0;0.8
+0;0;-0.1;0.1;0.5;0.0;0.8
 #choice 6
 6. [Aggressive] Use the incident as proof of the fallacies of capitalism
 This scandal is a clear proof of why the capitalist economy is unsustainable in the long term. When a class of bussinessmen accumulates too much wealth, they can then use it to corrupt and unduly influence the people's government. Where is the justice in that, I ask you?
-0;0;0;0.1;0.9;0.2;0.2
+0;0;0;0.1;0.9;0.9;0.2
 #choice 7
 7. [Rational] Use the incident to present the Tolozian government as better than the one in Admania
 Clearly, this incident, proves us once more that the Admanian government is the most corrupt in the region. While our government has ceaselessly made reform after reform in order to combat the blight that is corruption, the Admanians are content to sit by and let their country be plundered by greedy politicians!
-0;0;0;0;-0.1;0.5;0.6;0.2
+0;0;0;0;-0.1;0.5;0.3;0.2

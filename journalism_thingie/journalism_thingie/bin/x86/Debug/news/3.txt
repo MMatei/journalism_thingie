@@ -1,0 +1,8 @@
+The Admanians have taken to the streets to protest the corruption inside the government. There are widespread protests in many cities across the country.
+2
+1. [Rational] Downplay the protests as isolated incidents
+The international media has made a great fuss about the so-called Admanian 'protest'. However, the truth is that these are only isolated incidents, stirred most likely by local troublemakers.
+0;0;0;-0.2;0;0.2;0.1
+2. [Aggressive] Claim that foreign interests are behind the protests
+Today, spontaneous protests have begun throughout Admania, denouncing the current government. However, the magnitude of the movement suggests that the protests are not led by concerned citizens, but rather by vile foreign interests, who doubtlessly seek to undermine the government for their own profit.
+0;0;-0.2;0;-0.5;0.8;0.0
