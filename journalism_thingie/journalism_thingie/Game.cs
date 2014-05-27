@@ -44,6 +44,7 @@ namespace journalism_thingie
         public const byte ENDGAME = 5;
         public const byte SPLASH_SCREEN = 6;
         public const byte MAIN_MENU = 7;
+        public const byte INGAME_MENU = 8;
         private int day = 1;//contorizam la ce zi am ajuns ca sa stim ce date sa accesam
 
         /// <summary>
@@ -220,12 +221,12 @@ namespace journalism_thingie
                     spriteBatch.End();
                 }
                 break;
-                case MAIN_MENU:
+                case MAIN_MENU: case INGAME_MENU:
                 {
                     spriteBatch.Begin();
                     spriteBatch.Draw(menuScreen, backgroundRect, Color.White);
                     spriteBatch.DrawString(subtitleFont, "New Game", new Vector2(newGameRect.X, newGameRect.Y), Color.White, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
-                    //spriteBatch.DrawString(subtitleFont, "Options", new Vector2(optionsRect.X, optionsRect.Y), Color.White, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
+                    spriteBatch.DrawString(subtitleFont, "Load Game", new Vector2(optionsRect.X, optionsRect.Y), Color.White, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
                     spriteBatch.DrawString(subtitleFont, "Quit", new Vector2(quitRect.X, quitRect.Y), Color.White, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
                     spriteBatch.DrawString(subtitleFont, "v0.5", new Vector2((int)(screenW * 0.9), (int)(screenH * 0.9)), Color.White, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
                     spriteBatch.End();

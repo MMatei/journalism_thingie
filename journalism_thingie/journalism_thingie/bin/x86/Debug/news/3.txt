@@ -1,8 +1,20 @@
 The Admanians have taken to the streets to protest the corruption inside the government. There are widespread protests in many cities across the country.
-2
+6
 1. [Rational] Downplay the protests as isolated incidents
 The international media has made a great fuss about the so-called Admanian 'protest'. However, the truth is that these are only isolated incidents, stirred most likely by local troublemakers.
 0;0;0;-0.2;0;0.2;0.1
 2. [Aggressive] Claim that foreign interests are behind the protests
-Today, spontaneous protests have begun throughout Admania, denouncing the current government. However, the magnitude of the movement suggests that the protests are not led by concerned citizens, but rather by vile foreign interests, who doubtlessly seek to undermine the government for their own profit.
+Today, spontaneous protests have started throughout Admania, denouncing the current government. However, the magnitude of the movement suggests that the protests are not led by concerned citizens, but rather by vile foreign interests, who doubtlessly seek to undermine the government for their own profit.
 0;0;-0.2;0;-0.5;0.8;0.0
+3. [Rational] Cover the protests and present the government corruption as the cause
+Today, spontaneous protests have started throughout Admania, denouncing the current government. Interviewed protesters say that government corruption is what brought them to the streets.
+0;0;0;0.2;0;0.0;1.0
+4. [Aggressive] Inflate the protests and rail against the corruption in Tolozia
+Today, vast crowds have gathered in Admania's cities, vigorously protesting against the government's corruption. I believe we should look closely at our own government and their neverending despoiling of the country's riches. We should follow the Admanian example and rise up in protest against corruption!
+0;0;0;0.3;0;1.0;0.6
+5. [Aggressive] Inflate the protests and present them as the people rising against their capitalist overlords
+Today, vast crowds have gathered in Admania's cities, vigorously protesting against the government's corruption. The hard-working proletariat of Admania has begun the fight against the oppressive capitalist overlords, who have long abused them in their never-ending lust for profit.
+0;0;0;0.4;1.0;1.0;0.4
+6. [Aggressive] Inflate the protests and present them as a sign of instability in Admania
+Today, vast crowds have gathered in Admania's cities, creating senseless mayhem in the country. Differences with the government ought to be resolved through the diplomatic process, not wanton vandalism!
+0;0;0;-0.2;-0.5;0;0.3

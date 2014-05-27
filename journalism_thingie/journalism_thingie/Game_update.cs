@@ -103,7 +103,7 @@ namespace journalism_thingie
                 case ROOM:
                 {
                     if (keyCurrent.IsKeyDown(Keys.Escape))
-                        this.Exit();
+                        gameState = INGAME_MENU;
                     if (mouseStateCurrent.LeftButton == ButtonState.Pressed)
                     {
                         if (snapshotRect.Contains(mouseStateCurrent.X, mouseStateCurrent.Y))
@@ -120,9 +120,9 @@ namespace journalism_thingie
                 case ENDGAME:
                 {
                     if (keyCurrent.IsKeyDown(Keys.Escape))
-                        this.Exit();
+                        gameState = MAIN_MENU;
                     if (tvSpeech.update(keyCurrent, keyPrevious) == 1)
-                        this.Exit();
+                        gameState = MAIN_MENU;
                 }
                 break;
                 case SPLASH_SCREEN:
@@ -135,7 +135,7 @@ namespace journalism_thingie
                     }
                 }
                 break;
-                case MAIN_MENU:
+                case MAIN_MENU: case INGAME_MENU:
                 {
                     if(mouseStateCurrent.LeftButton == ButtonState.Pressed)
                     {
