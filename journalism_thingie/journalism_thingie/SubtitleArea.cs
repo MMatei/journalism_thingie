@@ -95,6 +95,8 @@ namespace journalism_thingie
         /// </summary>
         public int update(KeyboardState keyCurrent, KeyboardState keyPrevious)
         {
+            if (keyCurrent.IsKeyDown(Keys.Escape))
+                return 1;//se iese imediat cu escape
             // space sau enter trec la subtitrarea urmatoare
             if ((keyCurrent.IsKeyDown(Keys.Space) && keyPrevious.IsKeyUp(Keys.Space)) ||
                 (keyCurrent.IsKeyDown(Keys.Enter) && keyPrevious.IsKeyUp(Keys.Enter)))

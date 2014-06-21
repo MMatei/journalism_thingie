@@ -16,29 +16,35 @@ namespace journalism_thingie
     {
         internal void SaveGame(String saveFileName)
         {
-            StreamWriter savefile = new StreamWriter(saveFileName);
-            savefile.WriteLine(day);
+            //using binary format to discourage savegame editing
+            BinaryWriter savefile = new BinaryWriter(new FileStream(saveFileName, FileMode.Create));
+            savefile.Write(day);
             foreach (Citizen c in population)
             {
-                savefile.WriteLine(c.lifeQuality + ";" + c.fanaticism + ";" + c.ideology + ";" + c.nationalist + ";" +
-                    c.minorityRights + ";" + c.isolationism + ";" + c.socialJustice + ";" + c.mediaTrust);
+                savefile.Write(c.lifeQuality);
+                savefile.Write(c.fanaticism);
+                savefile.Write(c.ideology);
+                savefile.Write(c.nationalist);
+                savefile.Write(c.minorityRights);
+                savefile.Write(c.isolationism);
+                savefile.Write(c.socialJustice);
+                savefile.Write(c.mediaTrust);
             }
         }
         internal void LoadGame(String saveFileName)
         {
-            StreamReader savefile = new StreamReader(saveFileName);
-            day = Convert.ToInt32(savefile.ReadLine());
+            BinaryReader savefile = new BinaryReader(new FileStream(saveFileName, FileMode.Open));
+            day = savefile.ReadInt32();
             foreach (Citizen c in population)
             {
-                String[] word = savefile.ReadLine().Split(';');
-                c.lifeQuality = Convert.ToDouble(word[0]);
-                c.fanaticism = Convert.ToDouble(word[1]);
-                c.ideology = Convert.ToDouble(word[2]);
-                c.nationalist = Convert.ToDouble(word[3]);
-                c.minorityRights = Convert.ToDouble(word[4]);
-                c.isolationism = Convert.ToDouble(word[5]);
-                c.socialJustice = Convert.ToDouble(word[6]);
-                c.mediaTrust = Convert.ToDouble(word[7]);
+                c.lifeQuality = savefile.ReadDouble();
+                c.fanaticism = savefile.ReadDouble();
+                c.ideology = savefile.ReadDouble();
+                c.nationalist = savefile.ReadDouble();
+                c.minorityRights = savefile.ReadDouble();
+                c.isolationism = savefile.ReadDouble();
+                c.socialJustice = savefile.ReadDouble();
+                c.mediaTrust = savefile.ReadDouble();
             }
         }
         protected override void Update(GameTime gameTime)
@@ -58,7 +64,7 @@ namespace journalism_thingie
                     }
                     else
                     {
-                        if (keyCurrent.IsKeyDown(Keys.Enter))
+                        if (keyCurrent.IsKeyDown(Keys.Escape) || keyCurrent.IsKeyDown(Keys.Enter))
                         {
                             gameState = ROOM;
                         }
@@ -67,8 +73,7 @@ namespace journalism_thingie
                 break;
                 case FOCUS_GROUP:
                 {
-                    int ret = focusGroupView.update(mouseStateCurrent, mousePrevious, keyCurrent, gameTime);
-                    if (ret == 1)
+                    if (keyCurrent.IsKeyDown(Keys.Escape) || keyCurrent.IsKeyDown(Keys.Enter))
                     {
                         gameState = ROOM;
                     }
@@ -94,7 +99,7 @@ namespace journalism_thingie
                                 choices[j++] = o.description;
                             }
                             notepadChoice.setText(crrtNews.situationDescription, choices);
-                            focusGroupView.prepare(population);
+                            focusGroupView.prepare(population);//a day has passed => piecharts need updating
                             gameState = ROOM;
                         }
                     }
@@ -135,13 +140,32 @@ namespace journalism_thingie
                     }
                 }
                 break;
-                case MAIN_MENU: case INGAME_MENU:
+                case MAIN_MENU:
                 {
                     if(mouseStateCurrent.LeftButton == ButtonState.Pressed)
                     {
-                        if(newGameRect.Contains(mouseStateCurrent.X, mouseStateCurrent.Y))
+                        if (newGameRect.Contains(mouseStateCurrent.X, mouseStateCurrent.Y))
+                        {
+                            prepareNewGame();
                             gameState = ROOM;
+                        }
                         if(quitRect.Contains(mouseStateCurrent.X, mouseStateCurrent.Y))
+                            this.Exit();
+                    }
+                }
+                break;
+                case INGAME_MENU:
+                {
+                    if (keyCurrent.IsKeyDown(Keys.Escape))
+                        gameState = ROOM;//go back
+                    if (mouseStateCurrent.LeftButton == ButtonState.Pressed)
+                    {
+                        if (newGameRect.Contains(mouseStateCurrent.X, mouseStateCurrent.Y))
+                        {
+                            prepareNewGame();
+                            gameState = ROOM;
+                        }
+                        if (quitRect.Contains(mouseStateCurrent.X, mouseStateCurrent.Y))
                             this.Exit();
                     }
                 }

@@ -1,0 +1,8 @@
+The protests in Admania keep getting stronger as the government refuses any sort of compromise.
+2
+1. [Aggressive] Insist that the protests are winding down
+Do not believe the lies and propaganda that are being spread by anarchists and terrorists! The protests in Admania are winding down after the people realized that they are being manipulated by reckless agitators.
+0;0;0;-1.0;0;1.0;0
+2. [Aggressive] The downfall of capitalism is nigh!!!
+The protests in Admania have reached a new high as brave proletarians have seized the opportunity to overthrow their burgeoise oppresors. The time for revolution is ripe and soon we will witness a change of regime in Admania. Rejoice, all true socialists!
+0;0;0;1.0;-1.0;1.0;0.5

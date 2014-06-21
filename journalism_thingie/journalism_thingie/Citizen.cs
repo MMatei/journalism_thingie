@@ -330,5 +330,46 @@ namespace journalism_thingie
                 maxID += 2;
             return maxID;
         }
+
+        /// <summary>
+        /// Static method that randomly generates the 100 citizens that form our little focus group.
+        /// </summary>
+        public static Citizen[] generatePopulation()
+        {
+            Citizen[] population = new Citizen[100];
+            int i;
+            uint nrmin = 0, nrmed = 0, nrmax = 0;
+            Console.WriteLine("#POOR#");
+            for (i = 0; i < 40; i++)
+            {
+                population[i] = new Citizen(Citizen.POOR, 0);
+                Console.WriteLine(population[i].ideology + " " + population[i].fanaticism);
+                if (population[i].fanaticism < 0.1) nrmin++;
+                if (population[i].fanaticism > 0.45 && population[i].fanaticism < 0.55) nrmed++;
+                if (population[i].fanaticism > 0.9) nrmax++;
+            }
+            Console.WriteLine("#MIDDLE#");
+            for (i = 40; i < 90; i++)
+            {
+                population[i] = new Citizen(Citizen.MIDDLE, 0);
+                Console.WriteLine(population[i].ideology + " " + population[i].fanaticism);
+                if (population[i].fanaticism < 0.1) nrmin++;
+                if (population[i].fanaticism > 0.45 && population[i].fanaticism < 0.55) nrmed++;
+                if (population[i].fanaticism > 0.9) nrmax++;
+            }
+            Console.WriteLine("#RICH#");
+            for (i = 90; i < 100; i++)
+            {
+                population[i] = new Citizen(Citizen.RICH, 0);
+                Console.WriteLine(population[i].ideology + " " + population[i].fanaticism);
+                if (population[i].fanaticism < 0.1) nrmin++;
+                if (population[i].fanaticism > 0.45 && population[i].fanaticism < 0.55) nrmed++;
+                if (population[i].fanaticism > 0.9) nrmax++;
+            }
+            Console.WriteLine("###\nOverly apathetic: " + nrmin);
+            Console.WriteLine("Middle ground: " + nrmed);
+            Console.WriteLine("Overly fanatic: " + nrmax);
+            return population;
+        }
     }
 }

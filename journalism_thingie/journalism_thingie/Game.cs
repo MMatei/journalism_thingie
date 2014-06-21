@@ -29,7 +29,9 @@ namespace journalism_thingie
         private RenderTarget2D focusGroupViewSnapshot, notepadSnapshot;
         private Texture2D background, notepad, tvBackground, room, splashScreen, menuScreen;
         private Rectangle backgroundRect, notepadRect, tvRect, snapshotRect, notepadSnapshotRect,
-            newGameRect, optionsRect, quitRect;
+            newGameRect, loadGameRect, quitRect,
+            _newGameRect, _saveGameRect, _loadGameRect, _quitRect;//the menu accessed during a game has an extra option: save game
+            //therefore, we need to place the next two options lower
         private SpriteFont notepadFont, subtitleFont;
         private TextAreaChoice notepadChoice;
         private SubtitleArea tvSpeech;
@@ -45,7 +47,7 @@ namespace journalism_thingie
         public const byte SPLASH_SCREEN = 6;
         public const byte MAIN_MENU = 7;
         public const byte INGAME_MENU = 8;
-        private int day = 1;//contorizam la ce zi am ajuns ca sa stim ce date sa accesam
+        private int day;//contorizam la ce zi am ajuns ca sa stim ce date sa accesam
 
         /// <summary>
         /// now here we have a bit of cultural shock ;))
@@ -101,54 +103,16 @@ namespace journalism_thingie
             notepadFont = Content.Load<SpriteFont>("notepadFont");
             subtitleFont = Content.Load<SpriteFont>("subtitleFont");
             newGameRect = new Rectangle((int)(screenW * 0.45), (int)(screenH * 0.4), (int)(screenW * 0.1), (int)(screenH * 0.05));
-            optionsRect = new Rectangle((int)(screenW * 0.45), (int)(screenH * 0.5), (int)(screenW * 0.1), (int)(screenH * 0.05));
+            loadGameRect = new Rectangle((int)(screenW * 0.45), (int)(screenH * 0.5), (int)(screenW * 0.1), (int)(screenH * 0.05));
             quitRect = new Rectangle((int)(screenW * 0.45), (int)(screenH * 0.6), (int)(screenW * 0.1), (int)(screenH * 0.05));
-            
-            int i;
-            uint nrmin = 0, nrmed = 0, nrmax = 0;
-            Console.WriteLine("#POOR#");
-            for (i = 0; i < 40; i++)
-            {
-                population[i] = new Citizen(Citizen.POOR, 0);
-                Console.WriteLine(population[i].ideology + " " + population[i].fanaticism);
-                if (population[i].fanaticism < 0.1) nrmin++;
-                if (population[i].fanaticism > 0.45 && population[i].fanaticism < 0.55) nrmed++;
-                if (population[i].fanaticism > 0.9) nrmax++;
-            }
-            Console.WriteLine("#MIDDLE#");
-            for (i = 40; i < 90; i++)
-            {
-                population[i] = new Citizen(Citizen.MIDDLE, 0);
-                Console.WriteLine(population[i].ideology + " " + population[i].fanaticism);
-                if (population[i].fanaticism < 0.1) nrmin++;
-                if (population[i].fanaticism > 0.45 && population[i].fanaticism < 0.55) nrmed++;
-                if (population[i].fanaticism > 0.9) nrmax++;
-            }
-            Console.WriteLine("#RICH#");
-            for (i = 90; i < 100; i++)
-            {
-                population[i] = new Citizen(Citizen.RICH, 0);
-                Console.WriteLine(population[i].ideology + " " + population[i].fanaticism);
-                if (population[i].fanaticism < 0.1) nrmin++;
-                if (population[i].fanaticism > 0.45 && population[i].fanaticism < 0.55) nrmed++;
-                if (population[i].fanaticism > 0.9) nrmax++;
-            }
-            Console.WriteLine("###\nOverly apathetic: " + nrmin);
-            Console.WriteLine("Middle ground: " + nrmed);
-            Console.WriteLine("Overly fanatic: " + nrmax);
+            _newGameRect = new Rectangle((int)(screenW * 0.45), (int)(screenH * 0.3), (int)(screenW * 0.1), (int)(screenH * 0.05));
+            _saveGameRect = new Rectangle((int)(screenW * 0.45), (int)(screenH * 0.4), (int)(screenW * 0.1), (int)(screenH * 0.05));
+            _loadGameRect = new Rectangle((int)(screenW * 0.45), (int)(screenH * 0.5), (int)(screenW * 0.1), (int)(screenH * 0.05));
+            _quitRect = new Rectangle((int)(screenW * 0.45), (int)(screenH * 0.6), (int)(screenW * 0.1), (int)(screenH * 0.05));
 
-            crrtNews = new News("news/1.txt");
-            String[] choices = new String[crrtNews.options.Length];
-            int j = 0;
-            foreach (Option o in crrtNews.options)
-            {
-                choices[j++] = o.description;
-            }
             notepadChoice = new TextAreaChoice(spriteBatch, notepadFont, (int)(screenW * 0.3), (int)(screenH * 0.2), (int)(screenW * 0.4), (int)(screenH * 0.6));
-            notepadChoice.setText(crrtNews.situationDescription, choices);
             tvSpeech = new SubtitleArea(spriteBatch, subtitleFont, (int)(screenW * 0.1), (int)(screenH * 0.6), (int)(screenW * 0.8), (int)(screenH * 0.1));
             focusGroupView = new FocusGroupView(GraphicsDevice, spriteBatch, Content, notepadFont, background, screenW, screenH);
-            focusGroupView.prepare(population);
             focusGroupViewSnapshot = new RenderTarget2D(GraphicsDevice, screenW, screenH);
             notepadSnapshot = new RenderTarget2D(GraphicsDevice, screenW, screenH);
             // la dimensiunile originale, ar trebui sa inceapa de la 380x105 (imaginea orig e de 1920x1080)
@@ -221,18 +185,48 @@ namespace journalism_thingie
                     spriteBatch.End();
                 }
                 break;
-                case MAIN_MENU: case INGAME_MENU:
+                case MAIN_MENU:
                 {
                     spriteBatch.Begin();
                     spriteBatch.Draw(menuScreen, backgroundRect, Color.White);
                     spriteBatch.DrawString(subtitleFont, "New Game", new Vector2(newGameRect.X, newGameRect.Y), Color.White, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
-                    spriteBatch.DrawString(subtitleFont, "Load Game", new Vector2(optionsRect.X, optionsRect.Y), Color.White, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
+                    spriteBatch.DrawString(subtitleFont, "Load Game", new Vector2(loadGameRect.X, loadGameRect.Y), Color.White, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
                     spriteBatch.DrawString(subtitleFont, "Quit", new Vector2(quitRect.X, quitRect.Y), Color.White, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
                     spriteBatch.DrawString(subtitleFont, "v0.5", new Vector2((int)(screenW * 0.9), (int)(screenH * 0.9)), Color.White, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
                     spriteBatch.End();
                 }
                 break;
+                case INGAME_MENU:
+                {
+                    spriteBatch.Begin();
+                    spriteBatch.Draw(menuScreen, backgroundRect, Color.White);
+                    spriteBatch.DrawString(subtitleFont, "New Game", new Vector2(_newGameRect.X, _newGameRect.Y), Color.White, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
+                    spriteBatch.DrawString(subtitleFont, "Save Game", new Vector2(_saveGameRect.X, _saveGameRect.Y), Color.White, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
+                    spriteBatch.DrawString(subtitleFont, "Load Game", new Vector2(_loadGameRect.X, _loadGameRect.Y), Color.White, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
+                    spriteBatch.DrawString(subtitleFont, "Quit", new Vector2(_quitRect.X, _quitRect.Y), Color.White, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
+                    spriteBatch.DrawString(subtitleFont, "v0.5", new Vector2((int)(screenW * 0.9), (int)(screenH * 0.9)), Color.White, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
+                    spriteBatch.End();
+                }
+                break;
             }
+        }
+
+        /// <summary>
+        /// Initializes all variables at their new game state; this means generating a random focus group
+        /// </summary>
+        private void prepareNewGame()
+        {
+            day = 1;
+            population = Citizen.generatePopulation();
+            focusGroupView.prepare(population);
+            crrtNews = new News("news/1.txt");
+            String[] choices = new String[crrtNews.options.Length];
+            int j = 0;
+            foreach (Option o in crrtNews.options)
+            {
+                choices[j++] = o.description;
+            }
+            notepadChoice.setText(crrtNews.situationDescription, choices);
         }
     }
 }

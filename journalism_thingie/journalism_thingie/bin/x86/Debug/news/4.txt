@@ -2,7 +2,7 @@ The mayor of Tolozia's capital is involved in a large sex scandal; although marr
 4
 1. [Aggressive] Decry the rotten morals of the current generation
 It's not the scandal itself that bothers me the most, it's the people's reaction to it. They're all ears for more spicy details and photos, like a band of rabid dogs in heat, unable to control their lust. O tempore, o mores!
-0;0;0;0;-1.0;1.0;0.5
+0;0;0;0;1.0;1.0;0.5
 2. [Rational] Ignore the subject as much as possible
 Nobody's private life is our concern; we should care more for what these politicians do, rather than whom they choose to have intercourse with.
 0;0;0;0;0;0.0;0.5
@@ -10,5 +10,5 @@ Nobody's private life is our concern; we should care more for what these politic
 ...and we have acquired several photos depicting a move specialists are calling 'the twist'...
 0;0;0;0;0;0.0;1.0
 4. [Aggressive] Denounce the scandal as yet another example of the corruption of Tolozian politicians
-This sex scandal may seem unrelated, but I ask you this: where do you think the mayor gets the money to pay for all the expensive tastes of his mistress. We have leaked information that he has bought an expensive sports car for her and let me tell you, that money couldn't have come from his salary!
-0;0;0;-0.3;0;0.8;0.3
+This sex scandal may seem unrelated, but I ask you this: where do you think the mayor gets the money to pay for all the expensive tastes of his mistress? We have obtained leaked information that he has bought an expensive sports car for her and let me tell you, that money couldn't have come from his salary!
+0;0;0;-0.4;0;0.8;0.3

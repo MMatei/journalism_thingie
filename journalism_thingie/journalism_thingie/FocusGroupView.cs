@@ -200,32 +200,6 @@ namespace journalism_thingie
 
         public void draw(RenderTarget2D renderTarget)
         {
-            /*personRect.X = -personRect.Width;
-            personRect.Y = 0;
-            for (int i = 0; i < population.Length; i++)
-            {
-                personRect.X += personRect.Width;
-                if (personRect.X + personRect.Width > width)
-                {
-                    personRect.Y += personRect.Height;
-                    personRect.X = 0;
-                }
-                //color will depend on ideology: extreme right is black, center is blue and extreme left is red
-                float ideology = (float)population[i].ideology;
-                Color color;
-                if (ideology <= 0.5f)
-                {
-                    color = new Color(0.0f, 0.0f, ideology * 2);
-                }
-                else
-                    color = new Color((ideology - 0.5f) * 2, 0.0f, (1.0f - ideology) * 2);
-                spriteBatch.Draw(person, personRect, null, color, 0.0f, Vector2.Zero, SpriteEffects.None, 0.9f);
-            }
-            if (displayingTooltip)
-            {
-                spriteBatch.Draw(tooltipBackground, tooltipRect, null, Color.White, 0.0f, Vector2.Zero, SpriteEffects.None, 0.95f);
-                spriteBatch.DrawString(font, tooltip, tooltipStart, Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
-            }*/
             for (int i = 0; i < 6; i++)
             {
                 gdi.SetRenderTarget(piechartTexture[i]);
@@ -255,53 +229,6 @@ namespace journalism_thingie
             spriteBatch.DrawString(font, "Do you think the government is corrupt?", new Vector2(piechartRect[4].Left + 50, piechartRect[4].Bottom - 50), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
             spriteBatch.DrawString(font, "How much confidence do you have in our network?", new Vector2(piechartRect[5].Left + 50, piechartRect[5].Bottom - 50), Color.Black, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
             spriteBatch.End();
-        }
-
-        /// <summary>
-        /// Check if mouse hovers over person more than 2 seconds => pop-up displaying relevant info.
-        /// Returns 1 if user wants to return to notepad
-        /// </summary>
-        public int update(MouseState mouseStateCrrt, MouseState mouseStatePrev, KeyboardState keyCurrent, GameTime gameTime)
-        {
-            if (keyCurrent.IsKeyDown(Keys.Enter))
-                return 1;
-            /*bool mouseNotMoved = mouseStateCrrt.X == mouseStatePrev.X && mouseStateCrrt.Y == mouseStatePrev.Y;
-            if(displayingTooltip)
-            {
-                if (mouseNotMoved)
-                    return 0;
-                else
-                {
-                    displayingTooltip = false;
-                    return 0;
-                }
-            }
-            if (mouseNotMoved)
-            {
-                if (alreadyCounting)
-                {
-                    counter += gameTime.ElapsedGameTime.Milliseconds;
-                    //Console.WriteLine(counter);
-                    if (counter >= 2000)
-                    {
-                        displayingTooltip = true;
-                        alreadyCounting = false;
-                        int x = mouseStateCrrt.X / personRect.Width;
-                        int y = mouseStateCrrt.Y / personRect.Height;
-                        tooltip = "Ideology: " + population[y * personsPerRow + x].ideology.ToString("0.00");
-                        tooltipStart.X = mouseStateCrrt.X + 20;
-                        tooltipStart.Y = mouseStateCrrt.Y;
-                        Vector2 stringSize = font.MeasureString(tooltip);
-                        tooltipRect = new Rectangle((int)tooltipStart.X - 2, (int)tooltipStart.Y - 2, (int)stringSize.X + 4, (int)stringSize.Y + 4);
-                    }
-                }
-                else
-                {
-                    alreadyCounting = true;
-                    counter = 0;
-                }
-            }*/
-            return 0;
         }
     }
 }
